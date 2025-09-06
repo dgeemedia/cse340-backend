@@ -21,7 +21,7 @@ app.set("layout", "./layouts/layout")
 /* ***********************
  * Routes
  *************************/
-app.use(static)
+app.use(static);
 
 // Index route
 app.get("/", function (req, res) {

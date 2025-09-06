@@ -1,6 +1,307 @@
-/******* Change Box Model ***************/
+/* public/css/styles.css */
+/* Mobile-first styles */
+
+/* Reset / box-sizing already exists in your file but re-declare important basics */
 *,
 *:before,
 *:after {
   box-sizing: border-box;
+}
+
+:root{
+  --accent: #00b3c6;       /* cyan accent */
+  --nav-bg: #202433;       /* dark navy */
+  --text: #1f2d3d;         /* main text color */
+  --muted: #6b737b;
+  --max-width: 960px;
+  --container-pad: 16px;
+  --gap: 12px;
+}
+
+/* Body + background (checkerboard outside the main panel on wide screens) */
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color:var(--text);
+  background-color: #ffffff;
+  line-height:1.45;
+}
+
+/* Wrapper / center container */
+.container{
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--container-pad);
+}
+
+/* Header + nav partials are in partials, style here */
+#top-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding: 14px 0;
+}
+
+.siteName a{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:700;
+  font-size:1.4rem;
+}
+
+#tools a{
+  font-size:0.9rem;
+  color:var(--muted);
+  text-decoration:none;
+}
+
+/* Nav - full-width bar inside the .container */
+nav{
+  width: 100%;
+  margin: 10px 0 18px 0;
+  box-sizing: border-box;
+}
+
+/* the bar background that fits the container */
+nav .nav-bar {
+  background: #000;            /* solid black background */
+  border-radius: 6px;         /* subtle rounded corners */
+  padding: 6px;               /* inner spacing for the bar */
+  overflow: auto;             /* allow horizontal scroll on tiny screens */
+}
+
+/* list layout */
+nav ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  white-space:nowrap;         /* This keep items on one line if possible */
+}
+
+/* list items — no individual background */
+nav li{
+  background: transparent;    /* important: no per-item background */
+  padding: 0;                 /* padding will be on the link itself */
+  margin: 0;
+}
+
+/* links — white text, no underline, clickable block area */
+nav a{
+  display:inline-block;
+  color:#ffffff;
+  text-decoration:none;
+  font-weight:600;
+  padding:10px 16px;          /* clickable area */
+  border-radius:4px;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+/* hover/focus styles for accessibility */
+nav a:hover,
+nav a:focus{
+  background: rgba(255,255,255,0.06); /* subtle light highlight */
+  outline: none;
+}
+
+/* active/current page (optional) */
+nav a.active{
+  background: rgba(255,255,255,0.12);
+}
+
+/* Small screens makes sure the nav bar fits and can scroll */
+@media (max-width: 479px) {
+  nav .nav-bar {
+    padding: 8px 6px;
+  }
+  nav a{
+    padding:8px 12px;
+    font-size:0.95rem;
+  }
+}
+
+/* Page intro */
+.page-intro h1{
+  font-size:1.35rem;
+  margin: 8px 0 18px;
+}
+
+/* HERO */
+.hero{
+  position:relative;
+  display:block;
+  align-items:flex-start;
+  gap:12px;
+}
+
+/* hero image */
+.hero-image img{
+  width:100%;
+  height:auto;
+  display:block;
+  max-width: 560px;
+}
+
+/* CTA card overlay */
+.product-cta{
+  position:absolute;
+  left:8px;
+  top: 8px;
+  background: rgba(255,255,255,0.95);
+  border-left: 6px solid var(--accent);
+  padding:12px;
+  width: 48%;
+  max-width:230px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  backdrop-filter: blur(1px);
+}
+
+.product-cta .product-title{
+  display:inline-block;
+  font-weight:700;
+  color:var(--accent);
+  text-decoration:none;
+  margin-bottom:6px;
+  font-size:1.05rem;
+}
+
+.features{
+  margin:8px 0;
+  padding-left: 1.1rem;
+  color:var(--nav-bg);
+  font-size:0.95rem;
+  list-style: none;
+}
+
+.cta-btn{
+  display:inline-block;
+  margin-top:6px;
+  text-decoration:none;
+}
+
+.cta-btn img{
+  display:block;
+  width:120px;
+  height:auto;
+}
+
+/* Sections */
+.sections{
+  margin-top:24px;
+  display:block;
+  gap:16px;
+}
+
+/* Reviews */
+.reviews h2,
+.upgrades h2{
+  font-size:1.05rem;
+  margin: 0 0 10px;
+}
+
+.review-list{
+  padding-left:1.1rem;
+  color:var(--text);
+  margin:0;
+}
+
+/* Upgrades grid (mobile: 2 columns) */
+.upgrades-grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:14px;
+  margin-top:6px;
+}
+
+.upgrade{
+  background: var(--accent);
+  padding:12px;
+  text-align:center;
+  border-radius:4px;
+}
+
+.upgrade img{
+  width:100%;
+  height:auto;
+  max-height:86px;
+  object-fit:contain;
+  background:#fff;
+  padding:6px;
+  border-radius:3px;
+}
+
+.upgrade figcaption{
+  margin-top:8px;
+  font-size:0.95rem;
+}
+
+.upgrade a{
+  color:#0b2b33;
+  text-decoration:underline;
+}
+
+/* Footer from partial will display below */
+
+/* Larger screens centered white panel and checkerboard around it */
+@media (min-width: 880px){
+  body{
+    background-image: url('/images/site/small_check.jpg');
+    background-repeat: repeat;
+    background-size: auto;
+    padding: 28px 0;
+  }
+
+  .container{
+    background: #fff;
+    border: 6px solid var(--accent);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    padding: 24px 36px;
+  }
+
+  nav ul{ gap:18px; }
+
+  /* hero becomes two-column layout: image right, CTA left */
+  .hero{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .hero-image{
+    flex: 0 0 58%;
+    padding-left:18px;
+  }
+  .hero-image img{
+    max-width:100%;
+  }
+
+  .hero-content{
+    flex: 0 0 40%;
+    position:relative;
+  }
+
+  .product-cta{
+    position:relative;
+    left:0;
+    top:0;
+    width:100%;
+    max-width: none;
+    padding:18px;
+    margin-right: 8px;
+  }
+
+  /* sections now two-column side-by-side */
+  .sections{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:20px;
+    align-items:start;
+    margin-top:26px;
+  }
+
+  .upgrades-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
