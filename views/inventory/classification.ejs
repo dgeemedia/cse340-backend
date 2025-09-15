@@ -1,8 +1,22 @@
-<!--views/inventory/classification.ejs-->
-<% if (title) { %>
-  <h1><%= title %></h1>
-<% } %>
+<div class="container inventory-page">
+  <div class="page-intro">
+    <% if (title) { %>
+      <h1 class="page-title"><%= title %></h1>
+    <% } %>
+  </div>
 
-<%# messages() %>
+  <div class="inventory-meta">
+    <p class="inventory-count"><!-- optional: injected by controller later --></p>
+  </div>
 
-<%- grid %>
+  <main aria-live="polite">
+    <% if (typeof grid !== "undefined" && grid) { %>
+      <!-- grid is raw HTML from utilities.buildClassificationGrid -->
+      <section class="inventory-grid-wrap">
+        <%- grid %>
+      </section>
+    <% } else { %>
+      <p class="notice">Sorry, no matching vehicles could be found.</p>
+    <% } %>
+  </main>
+</div>
