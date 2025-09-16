@@ -102,7 +102,7 @@ nav a{
 /* hover/focus styles for accessibility */
 nav a:hover,
 nav a:focus{
-  background: rgba(255,255,255,0.06); /* subtle light highlight */
+  background: var(--accent); /* subtle light highlight */
   outline: none;
 }
 
