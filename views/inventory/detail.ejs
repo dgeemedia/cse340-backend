@@ -1,0 +1,18 @@
+<!-- views/inventory/detail.ejs -->
+<div class="container inventory-detail-page">
+  <div class="page-intro">
+    <% if (title) { %>
+      <h1 class="page-title"><%= title %></h1>
+    <% } %>
+  </div>
+
+  <main>
+    <% if (typeof detail !== "undefined" && detail) { %>
+      <section class="inventory-detail-wrap">
+        <%- detail %>
+      </section>
+    <% } else { %>
+      <p class="notice">Sorry, no vehicle details available.</p>
+    <% } %>
+  </main>
+</div>

@@ -1,0 +1,8 @@
+<!-- views/error.ejs -->
+<div class="container error-page">
+  <h1><%= title %></h1>
+  <p class="notice"><%= message %></p>
+  <% if (error && error.stack) { %>
+    <pre class="error-stack"><%= error.stack %></pre>
+  <% } %>
+</div>
