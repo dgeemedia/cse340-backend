@@ -1,16 +1,12 @@
 // models/inventory-model.js
 const pool = require("../database")
 
-/* ***************************
- *  Get all classification data
- * ************************** */
+// Get all classifications
 async function getClassifications(){
   return await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
 }
 
-/* ***************************
- *  Get all inventory items and classification_name by classification_id
- * ************************** */
+// Get inventory items by classification_id
 async function getInventoryByClassificationId(classification_id) {
   try {
     const data = await pool.query(
@@ -36,7 +32,7 @@ async function getInventoryById(inv_id) {
        WHERE i.inv_id = $1`,
       [inv_id]
     )
-    return data.rows[0]  // undefined if not found
+    return data.rows[0]
   } catch (error) {
     console.error("getInventoryById error: ", error)
     throw error

@@ -1,10 +1,4 @@
-/* ******************************************
- * server.js — primary file for the application
- *******************************************/
-
-/* ***********************
- * Require Statements
- *************************/
+// server.js
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
 require("dotenv").config()
@@ -18,18 +12,15 @@ const miscRoute = require("./routes/misc")
 const errorHandler = require("./middleware/errorHandler")
 const utilities = require("./utilities")
 
-/* ***********************
- * Middleware / Parsers
- *************************/
-// parse application/x-www-form-urlencoded
+// parse application
 app.use(express.urlencoded({ extended: true }))
 // parse application/json
 app.use(express.json())
 
-// serve static files early
+// static files
 app.use(static)
 
-// make nav available to every view (must be BEFORE routes that render views)
+// custom middleware to set nav for all views
 app.use(async (req, res, next) => {
   try {
     res.locals.nav = await utilities.getNav() || ""
@@ -39,49 +30,36 @@ app.use(async (req, res, next) => {
   }
 })
 
-/* ***********************
- * View Engine and Templates
- *************************/
+// view engine
 app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
-/* ***********************
- * Routes
- *************************/
+
 // Index route
 app.get("/", baseController.buildHome)
 
 // Inventory routes
 app.use("/inv", inventoryRoute)
 
-// misc route for error trigger (mounted at root so path is /error/trigger)
+// misc route for error trigger
 app.use("/", miscRoute)
 
-/* ***********************
- * 404 fallback (not found)
- *************************/
+// 404 handler
 app.use((req, res, next) => {
   const err = new Error("Not Found")
   err.status = 404
   next(err)
 })
 
-/* ***********************
- * Global error handler (must be last)
- *************************/
+// Error handling middleware
 app.use(errorHandler)
 
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
+// Server and  host
 const port = process.env.PORT || 5500
 const host = process.env.HOST || "localhost"
 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
+// Start server
 app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`)
 })
