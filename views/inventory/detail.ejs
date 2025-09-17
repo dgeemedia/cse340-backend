@@ -2,11 +2,13 @@
 <div class="container inventory-detail-page">
   <div class="page-intro">
     <% if (title) { %>
-      <h1 class="page-title"><%= title %></h1>
+      <h1 id="page-title" class="page-title"><%= title %></h1>
     <% } %>
   </div>
 
-  <main>
+  <section aria-labelledby="page-title" class="inventory-detail-section">
+    <h2 class="sr-only">Vehicle details</h2>
+
     <% if (typeof detail !== "undefined" && detail) { %>
       <section class="inventory-detail-wrap">
         <%- detail %>
@@ -14,5 +16,5 @@
     <% } else { %>
       <p class="notice">Sorry, no vehicle details available.</p>
     <% } %>
-  </main>
+  </section>
 </div>

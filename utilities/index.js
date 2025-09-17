@@ -71,9 +71,9 @@ Util.buildInventoryDetail = async function(vehicle){
 
   let html = ''
   html += '<div class="vehicle-detail">'
-  html +=   `<div class="vehicle-image"><img src="${imagePath}" alt="${vehicle.inv_make} ${vehicle.inv_model}" /></div>`
+  html +=   `<div class="vehicle-image"><img src="${imagePath}" alt="${vehicle.inv_make} ${vehicle.inv_model}"></div>`
   html +=   '<div class="vehicle-info">'
-  html +=     `<h1>${vehicle.inv_make} ${vehicle.inv_model} (${vehicle.inv_year || ""})</h1>`
+  html +=     `<h2>${vehicle.inv_make} ${vehicle.inv_model} (${vehicle.inv_year || ""})</h2>`
   html +=     `<p class="price">$${price}</p>`
   html +=     `<p class="miles">Mileage: ${mileage} miles</p>`
   html +=     `<p class="desc">${vehicle.inv_description || ""}</p>`
