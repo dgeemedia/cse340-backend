@@ -1,13 +1,10 @@
-/* public/css/styles.css */
-/* Mobile-first styles */
+/* =========================
+   styles.css — organized + responsive
+   ========================= */
 
-/* Reset / box-sizing already exists in your file but re-declare important basics */
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
-
+/* -------------------------
+   :root / variables
+   ------------------------- */
 :root{
   --accent: #00b3c6;       /* cyan accent */
   --nav-bg: #202433;       /* dark navy */
@@ -18,233 +15,254 @@
   --gap: 12px;
 }
 
-/* Body + background (checkerboard outside the main panel on wide screens) */
-body{
-  margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color:var(--text);
-  background-color: #ffffff;
-  line-height:1.45;
+/* -------------------------
+   Reset / base
+   ------------------------- */
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }
 
-/* Wrapper / center container */
+html, body {
+  height: 100%;
+}
+
+body{
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background-color: #ffffff;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Centering wrapper */
 .container{
   max-width: var(--max-width);
   margin: 0 auto;
   padding: var(--container-pad);
 }
 
-/* Header + nav partials are in partials, style here */
+/* -------------------------
+   Header / top tools
+   ------------------------- */
 #top-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 14px 0;
 }
 
 .siteName a{
-  text-decoration:none;
-  color:var(--text);
-  font-weight:700;
-  font-size:1.4rem;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 #tools a{
-  font-size:0.9rem;
-  color:var(--muted);
-  text-decoration:none;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-decoration: none;
 }
 
-/* Nav - full-width bar inside the .container */
-nav{
+/* -------------------------
+   Navigation
+   ------------------------- */
+/* wrapper for the bar inside container */
+nav {
   width: 100%;
-  margin: 10px 0 18px 0;
+  margin: 10px 0 18px;
   box-sizing: border-box;
 }
 
-/* the bar background that fits the container */
+/* nav-bar: use visible overflow and allow wrapping (no horizontal scroll) */
 nav .nav-bar {
-  background: #000;            /* solid black background */
-  border-radius: 6px;         /* subtle rounded corners */
-  padding: 6px;               /* inner spacing for the bar */
-  overflow: auto;             /* allow horizontal scroll on tiny screens */
+  background: #000;
+  border-radius: 6px;
+  padding: 8px;
+  overflow: visible; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-/* list layout */
-nav ul{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  white-space:nowrap;         /* This keep items on one line if possible */
+/* nav list: horizontal flex layout that wraps */
+nav .nav-bar > ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;              /* allow items to wrap to next line on small screens */
 }
 
-/* list items — no individual background */
+/* list items — no per-item backgrounds */
 nav li{
-  background: transparent;    /* important: no per-item background */
-  padding: 0;                 /* padding will be on the link itself */
+  padding: 0;
   margin: 0;
 }
 
-/* links — white text, no underline, clickable block area */
+/* links — white text, clickable area */
 nav a{
-  display:inline-block;
-  color:#ffffff;
-  text-decoration:none;
-  font-weight:600;
-  padding:10px 16px;          /* clickable area */
-  border-radius:4px;
+  display: inline-block;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 4px;
   transition: background-color .15s ease, color .15s ease;
+  white-space: normal;          /* allow wrapping within the clickable area if needed */
 }
 
 /* hover/focus styles for accessibility */
 nav a:hover,
 nav a:focus{
-  background: var(--accent); /* subtle light highlight */
+  background: var(--accent);
   outline: none;
 }
 
-/* active/current page (optional) */
+/* active/current page */
 nav a.active{
   background: rgba(255,255,255,0.12);
 }
 
-/* Small screens makes sure the nav bar fits and can scroll */
+/* small-screen adjustments */
 @media (max-width: 479px) {
-  nav .nav-bar {
-    padding: 8px 6px;
-  }
-  nav a{
-    padding:8px 12px;
-    font-size:0.95rem;
-  }
+  nav .nav-bar { padding: 8px 6px; }
+  nav a { padding: 8px 12px; font-size: 0.95rem; }
+  /* ensure nav items are centered on narrow screens */
+  nav .nav-bar > ul { justify-content: center; gap: 8px; }
 }
 
-/* Page intro */
+/* -------------------------
+   Page intro / hero / CTA
+   ------------------------- */
 .page-intro h1{
-  font-size:1.35rem;
+  font-size: 1.35rem;
   margin: 8px 0 18px;
 }
 
-/* HERO */
 .hero{
-  position:relative;
-  display:block;
-  align-items:flex-start;
-  gap:12px;
+  position: relative;
+  display: block;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 /* hero image */
 .hero-image img{
-  width:100%;
-  height:auto;
-  display:block;
+  width: 100%;
+  height: auto;
+  display: block;
   max-width: 560px;
 }
 
 /* CTA card overlay */
 .product-cta{
-  position:absolute;
-  left:8px;
+  position: absolute;
+  left: 8px;
   top: 8px;
   background: rgba(255,255,255,0.95);
   border-left: 6px solid var(--accent);
-  padding:12px;
+  padding: 12px;
   width: 48%;
-  max-width:230px;
+  max-width: 230px;
   box-shadow: 0 6px 14px rgba(0,0,0,0.08);
   backdrop-filter: blur(1px);
 }
 
 .product-cta .product-title{
-  display:inline-block;
-  font-weight:700;
-  color:var(--accent);
-  text-decoration:none;
-  margin-bottom:6px;
-  font-size:1.05rem;
+  display: inline-block;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-size: 1.05rem;
 }
 
 .features{
-  margin:8px 0;
+  margin: 8px 0;
   padding-left: 1.1rem;
-  color:var(--nav-bg);
-  font-size:0.95rem;
+  color: var(--nav-bg);
+  font-size: 0.95rem;
   list-style: none;
 }
 
 .cta-btn{
-  display:inline-block;
-  margin-top:6px;
-  text-decoration:none;
+  display: inline-block;
+  margin-top: 6px;
+  text-decoration: none;
 }
 
 .cta-btn img{
-  display:block;
-  width:120px;
-  height:auto;
+  display: block;
+  width: 120px;
+  height: auto;
 }
 
-/* Sections */
+/* -------------------------
+   Sections / Reviews / Upgrades
+   ------------------------- */
 .sections{
-  margin-top:24px;
-  display:block;
-  gap:16px;
+  margin-top: 24px;
+  display: block;
+  gap: 16px;
 }
 
-/* Reviews */
 .reviews h2,
 .upgrades h2{
-  font-size:1.05rem;
+  font-size: 1.05rem;
   margin: 0 0 10px;
 }
 
 .review-list{
-  padding-left:1.1rem;
-  color:var(--text);
-  margin:0;
+  padding-left: 1.1rem;
+  color: var(--text);
+  margin: 0;
 }
 
-/* Upgrades grid (mobile: 2 columns) */
+/* Upgrades grid (mobile first: 2 columns) */
 .upgrades-grid{
-  display:grid;
+  display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap:14px;
-  margin-top:6px;
+  gap: 14px;
+  margin-top: 6px;
 }
 
 .upgrade{
   background: var(--accent);
-  padding:12px;
-  text-align:center;
-  border-radius:4px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 4px;
 }
 
 .upgrade img{
-  width:100%;
-  height:auto;
-  max-height:86px;
-  object-fit:contain;
-  background:#fff;
-  padding:6px;
-  border-radius:3px;
+  width: 100%;
+  height: auto;
+  max-height: 86px;
+  object-fit: contain;
+  background: #fff;
+  padding: 6px;
+  border-radius: 3px;
 }
 
 .upgrade figcaption{
-  margin-top:8px;
-  font-size:0.95rem;
+  margin-top: 8px;
+  font-size: 0.95rem;
 }
 
 .upgrade a{
-  color:#0b2b33;
-  text-decoration:underline;
+  color: #0b2b33;
+  text-decoration: underline;
 }
 
-/* Footer from partial will display below */
-
-/* Larger screens centered white panel and checkerboard around it */
+/* -------------------------
+   Larger-screen layout tweaks
+   (centered white panel + checkerboard)
+   ------------------------- */
 @media (min-width: 880px){
   body{
     background-image: url('/images/site/small_check.jpg');
@@ -260,45 +278,44 @@ nav a.active{
     padding: 24px 36px;
   }
 
-  nav ul{ gap:18px; }
+  nav ul{ gap: 18px; }
 
-  /* hero becomes two-column layout: image right, CTA left */
+  /* hero becomes two-column layout */
   .hero{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .hero-image{
     flex: 0 0 58%;
-    padding-left:18px;
+    padding-left: 18px;
   }
   .hero-image img{
-    max-width:100%;
+    max-width: 100%;
   }
 
   .hero-content{
     flex: 0 0 40%;
-    position:relative;
+    position: relative;
   }
 
   .product-cta{
-    position:relative;
-    left:0;
-    top:0;
-    width:100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
     max-width: none;
-    padding:18px;
+    padding: 18px;
     margin-right: 8px;
   }
 
-  /* sections now two-column side-by-side */
   .sections{
-    display:grid;
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap:20px;
-    align-items:start;
-    margin-top:26px;
+    gap: 20px;
+    align-items: start;
+    margin-top: 26px;
   }
 
   .upgrades-grid{
@@ -306,12 +323,9 @@ nav a.active{
   }
 }
 
-/* =========================
-   Inventory / Classification styles
-   Professional card grid + responsive layout
-   Paste this at the end of your styles.css
-   ========================= */
-
+/* -------------------------
+   Inventory / classification styles
+   ------------------------- */
 .inventory-page .page-title {
   font-size: 1.25rem;
   margin: 6px 0 10px;
@@ -319,7 +333,6 @@ nav a.active{
   letter-spacing: -0.2px;
 }
 
-/* Wrap the generated UL so we can style the list items */
 #inv-display {
   list-style: none;
   margin: 0;
@@ -329,7 +342,6 @@ nav a.active{
   gap: 14px;
 }
 
-/* Each inventory card */
 #inv-display > li {
   display: flex;
   gap: 12px;
@@ -342,13 +354,11 @@ nav a.active{
   transition: transform .15s ease, box-shadow .15s ease;
 }
 
-/* Hover lift */
 #inv-display > li:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 34px rgba(15,23,32,0.08);
 }
 
-/* Thumbnail column */
 #inv-display img {
   width: 132px;
   height: 88px;
@@ -358,16 +368,14 @@ nav a.active{
   display: block;
 }
 
-/* Name & price container */
 .namePrice {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex: 1 1 auto;
-  min-width: 0; /* allow truncation */
+  min-width: 0;
 }
 
-/* Vehicle title */
 .namePrice h2 {
   margin: 0 0 6px;
   font-size: 1rem;
@@ -378,7 +386,6 @@ nav a.active{
   text-overflow: ellipsis;
 }
 
-/* Title link */
 .namePrice h2 a {
   color: inherit;
   text-decoration: none;
@@ -388,7 +395,6 @@ nav a.active{
   text-decoration: underline;
 }
 
-/* Price */
 .namePrice span {
   display: inline-block;
   font-weight: 700;
@@ -400,14 +406,12 @@ nav a.active{
   align-self: flex-start;
 }
 
-/* Small meta and hr */
 .namePrice hr {
   border: none;
   border-top: 1px solid rgba(31,45,61,0.06);
   margin: 8px 0;
 }
 
-/* Notice when no items found */
 .notice {
   background: #fff8f2;
   border-left: 4px solid #ffb36b;
@@ -417,12 +421,10 @@ nav a.active{
   margin: 12px 0;
 }
 
-/* Inventory grid wrapper for spacing */
 .inventory-grid-wrap {
   margin-top: 10px;
 }
 
-/* Larger screens: switch to multi-column card grid */
 @media (min-width: 640px) {
   #inv-display {
     grid-template-columns: repeat(2, 1fr);
@@ -438,7 +440,6 @@ nav a.active{
   #inv-display {
     grid-template-columns: repeat(3, 1fr);
   }
-  /* Make the card vertical on wide screens for a cleaner card layout */
   #inv-display > li {
     flex-direction: column;
     align-items: stretch;
@@ -462,32 +463,12 @@ nav a.active{
   border-radius: 6px;
 }
 
-/* Nav bar adjustment (keeps nav-bar centered visually) */
-nav .nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 8px;
-}
-
-/* Improve look of the raw UL generated by getNav() */
-nav .nav-bar > ul {
-  display: flex;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-}
-
-/* Improve link contrast on nav buttons (overrides earlier subtle hover) */
-nav a {
-  color: #ffffff;
-}
-
-/* vehicle detail */
+/* -------------------------
+   Vehicle detail styles
+   ------------------------- */
 .vehicle-detail {
   display: grid;
-  grid-template-columns: 1fr; /* default: stacked */
+  grid-template-columns: 1fr;
   gap: 1.25rem;
   align-items: start;
   margin: 1rem 0;
@@ -495,7 +476,7 @@ nav a {
 
 .vehicle-detail .vehicle-image {
   width: 100%;
-  max-width: 720px; /* prevents huge images on very wide screens */
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -520,7 +501,7 @@ nav a {
 .vehicle-detail .price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0b7a4d; /* green tone — change to match brand */
+  color: #0b7a4d;
   margin: 0.25rem 0;
 }
 
@@ -536,18 +517,91 @@ nav a {
   padding-left: 1rem;
 }
 
-/* larger screens: side-by-side */
 @media (min-width: 880px) {
   .vehicle-detail {
     grid-template-columns: 48% 52%;
   }
-
   .vehicle-detail .vehicle-image { max-width: none; }
   .vehicle-detail .vehicle-info h1 { font-size: 1.75rem; }
 }
 
-/* small-screen tweaks */
 @media (max-width: 480px) {
   .vehicle-detail .vehicle-info h1 { font-size: 1.25rem; }
   .vehicle-detail .price { font-size: 1.05rem; }
 }
+
+/* -------------------------
+   Account form (clean + responsive)
+   ------------------------- */
+.account-form {
+  width: 100%;
+  max-width: 460px;
+  margin: 18px 0;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(31,45,61,0.04);
+  box-shadow: 0 8px 24px rgba(31,45,61,0.06);
+}
+
+.form-row { margin-bottom: 12px; }
+
+.account-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.account-form input[type="email"],
+.account-form input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(31,45,61,0.08);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: #fff;
+  transition: border-color .14s ease, box-shadow .14s ease;
+}
+
+.account-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 6px rgba(0,179,198,0.06);
+}
+
+.account-form button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.flash-messages {
+  margin-bottom: 10px;
+}
+
+.register-link {
+  margin-top: 12px;
+  display: block;
+  color: var(--muted);
+}
+
+/* small screen account tweaks */
+@media (max-width: 480px) {
+  .account-form { padding: 16px; border-radius: 10px; }
+  .account-form button { width: 100%; padding: 12px; font-size: 1rem; }
+}
+
+/* -------------------------
+   Utility helpers
+   ------------------------- */
+.notice { color: var(--muted); font-size: 0.95rem; }
+
+/* -------------------------
+   End of file
+   ------------------------- */
