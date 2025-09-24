@@ -5,27 +5,43 @@
   <!-- Flash / express-messages -->
   <div class="flash-messages">
     <%- messages() %>
+
+    <% if (errors) { %>
+      <ul class="error">
+      <% errors.array().forEach(error => { %>
+      <li><%= error.msg %></li>
+      <%  }) %>
+      </ul>
+    <% } %>
+
   </div>
 
-  <form action="/account/register" method="post" class="account-form" novalidate>
+  <form action="/account/register" method="post" class="account-form">
     <div class="form-row">
       <label for="account_firstname">First Name <span class="required" aria-hidden="true">*</span></label>
-      <input id="account_firstname" name="account_firstname" type="text" required />
+      <input id="account_firstname" name="account_firstname" type="text" required value="<%= locals.account_firstname %>" />
     </div>
 
     <div class="form-row">
       <label for="account_lastname">Last Name <span class="required" aria-hidden="true">*</span></label>
-      <input id="account_lastname" name="account_lastname" type="text" required />
+      <input id="account_lastname" name="account_lastname" type="text" required value="<%= locals.account_lastname %>" />
     </div>
 
     <div class="form-row">
       <label for="account_email">Email <span class="required" aria-hidden="true">*</span></label>
-      <input id="account_email" name="account_email" type="email" required />
+      <input id="account_email" name="account_email" type="email" required value="<%= locals.account_firstname %>" />
     </div>
 
     <div class="form-row">
       <label for="account_password">Password <span class="required" aria-hidden="true">*</span></label>
-      <input id="account_password" name="account_password" type="password" aria-describedby="pw-requirements" required />
+      <input
+        id="account_password"
+        name="account_password"
+        type="password"
+        required
+        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
+        aria-describedby="pw-requirements"
+      />
       <button type="button" id="togglePassword" class="pw-toggle" aria-pressed="false">Show</button>
     </div>
 
@@ -37,7 +53,6 @@
         <li>At least 1 number</li>
         <li>At least 1 special character (e.g. !@#$%)</li>
       </ul>
-      <p class="muted-note">(Validation will be enforced later.)</p>
     </div>
 
     <div class="form-row">
