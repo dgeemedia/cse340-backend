@@ -1,5 +1,6 @@
 // server.js
 const express = require("express")
+const bodyParser = require("body-parser")
 const expressLayouts = require("express-ejs-layouts")
 const session = require("express-session")
 const pool = require('./database')
@@ -35,7 +36,10 @@ app.use(async (req, res, next) => {
 /* ***********************
  * Middleware
  * ************************/
- app.use(session({
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}))
+
+app.use(session({
   store: new (require('connect-pg-simple')(session))({
     createTableIfMissing: true,
     pool,
