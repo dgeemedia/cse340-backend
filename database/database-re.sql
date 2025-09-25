@@ -117,3 +117,10 @@ UPDATE public.inventory
 SET inv_image = replace(inv_image, '/images/', '/images/vehicles/'),
     inv_thumbnail = replace(inv_thumbnail, '/images/', '/images/vehicles/')
 WHERE inv_image LIKE '/images/%' OR inv_thumbnail LIKE '/images/%';
+
+-- 7) Updating inventory adding a column
+ALTER TABLE public.inventory
+ADD COLUMN inv_body VARCHAR(100);
+
+ALTER TABLE public.inventory
+ADD COLUMN inv_transmission VARCHAR(50);

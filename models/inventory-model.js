@@ -53,11 +53,7 @@ async function addClassification(classification_name) {
 
 // add inventory item
 async function addInventoryItem(inv) {
-  /* inv should be an object with keys:
-     inv_make, inv_model, inv_description, inv_image, inv_thumbnail,
-     inv_price, inv_miles, inv_color, inv_body, inv_transmission,
-     inv_year, classification_id
-  */
+
   try {
     const sql = `INSERT INTO public.inventory
       (inv_make, inv_model, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, inv_body, inv_transmission, inv_year, classification_id)
