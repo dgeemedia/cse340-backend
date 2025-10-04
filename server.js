@@ -5,6 +5,7 @@ const expressLayouts = require("express-ejs-layouts")
 const session = require("express-session")
 const pool = require('./database')
 require("dotenv").config()
+const cookieParser = require('cookie-parser')
 
 const app = express()
 
@@ -38,6 +39,8 @@ app.use(async (req, res, next) => {
  * ************************/
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
+app.use(cookieParser())
+app.use(utilities.checkJWTToken)
 
 app.use(session({
   store: new (require('connect-pg-simple')(session))({

@@ -644,6 +644,95 @@ nav a.active {
 }
 
 /* -------------------------
+   Inventory manage header + select + results table
+   ------------------------- */
+
+/* Heading & short instruction */
+.inventory-page h2 {
+  font-size: 1.15rem;
+  margin: 12px 0 6px;
+  color: var(--nav-bg);
+  text-align: center;
+  font-weight: 700;
+}
+.inventory-page p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  text-align: center;
+  max-width: 680px;
+}
+
+/* Make the classification select look like other form controls but centered */
+.inventory-page #classificationList,
+.inventory-page select {
+  display: block;
+  margin: 0 auto 18px;
+  max-width: 420px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(31,45,61,0.08);
+  background: #fff;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+}
+
+/* Small visual hint to the left of the select on wide screens */
+@media (min-width: 880px) {
+  .inventory-page #classificationList {
+    max-width: 360px;
+  }
+}
+
+/* Inventory results area (table) — give it some breathing room */
+#inventoryDisplay {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  min-height: 120px;              /* visible area before JS inserts rows */
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15,23,32,0.04);
+}
+
+/* Friendly placeholder when no rows yet (works because table is initially empty) */
+#inventoryDisplay:empty::before {
+  content: "No vehicles to display — choose a classification above.";
+  display: block;
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+/* Table header & rows (keeps continuity with earlier styles) */
+#inventoryDisplay thead th {
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 700;
+  background: rgba(0,0,0,0.03);
+  border-bottom: 1px solid rgba(31,45,61,0.06);
+}
+#inventoryDisplay tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(31,45,61,0.04);
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+#inventoryDisplay tbody tr:hover {
+  background: rgba(0,179,198,0.03);
+}
+
+/* Narrow screens: make layout stacked & touch-friendly */
+@media (max-width: 480px) {
+  .inventory-page h2 { font-size: 1.05rem; }
+  #inventoryDisplay thead { display: none; } /* if JS creates rows in stacked format you may adapt */
+  #inventoryDisplay tbody td { padding: 12px; }
+  .inventory-actions { padding: 0 12px; }
+}
+
+/* -------------------------
    Flash icon helpers & animation
    ------------------------- */
 .flash-messages .alert,
@@ -714,6 +803,104 @@ nav a.active {
   .account-form { padding: 16px; border-radius: 10px; }
   .inventory-actions { flex-direction: column; gap: 10px; }
   .account-form textarea { min-height: 96px; }
+}
+
+/* -------------------------
+   Account management card & actions
+   ------------------------- */
+.account-body {
+  width: 100%;
+  max-width: 720px;            /* slightly wider for management view */
+  background: #ffffff;
+  padding: 20px 22px;
+  border-radius: 12px;
+  border: 1px solid rgba(31,45,61,0.04);
+  box-shadow: 0 10px 30px rgba(31,45,61,0.05);
+  margin-top: 8px;
+  text-align: left;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+/* top row: title + action buttons */
+.account-body .account-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.account-body .account-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--nav-bg);
+  font-weight: 700;
+}
+.account-body .account-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* action buttons */
+.account-body .btn-secondary,
+.account-body .btn-logout {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(31,45,61,0.06);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.account-body .btn-secondary:hover { background: rgba(31,45,61,0.03); }
+.account-body .btn-logout {
+  color: #b33b3b;
+  border-color: rgba(179,59,59,0.08);
+}
+.account-body .btn-logout:hover { background: rgba(179,59,59,0.04); }
+
+/* account details area */
+.account-body .account-details {
+  display: grid;
+  gap: 6px;
+  font-size: 0.98rem;
+  color: var(--text);
+}
+.account-body .account-details p { margin: 0; }
+.account-body .account-details .label {
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-right: 6px;
+}
+
+/* small utility row for links */
+.account-body .account-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.account-body .account-links a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.account-body .account-links a:hover { text-decoration: underline; }
+
+/* form-errors / errors list inside management card */
+.account-body .error,
+.account-body .form-errors {
+  margin-top: 6px;
+  max-width: 100%;
+}
+
+/* responsive */
+@media (max-width: 640px) {
+  .account-body { padding: 16px; max-width: 100%; }
+  .account-body .account-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .account-body .account-actions { width: 100%; justify-content: flex-start; }
 }
 
 /* -------------------------

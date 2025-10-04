@@ -11,7 +11,16 @@
     </p>
   </div>
 
+  <h2>Manage Inventory</h2>
+  <p>Choose a classification to see those inventory items</p>
+  <%- classificationSelect %>
+
+  <table id="inventoryDisplay"></table>
+
   <div class="flash-messages">
     <%- messages() %>
   </div>
 </div>
+
+<noscript>JavaScript must be enabled to view this page.</noscript>
+<script src="../../js/inventory.js"></script>

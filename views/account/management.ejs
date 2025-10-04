@@ -1,0 +1,42 @@
+<!--views/account/management.ejs-->
+<div class="account-page">
+  <h1 class="account-title"><%= title %></h1>
+
+  <!-- flash / express-messages -->
+  <div class="flash-messages">
+    <%- messages() %>
+
+    <% if (errors) { %>
+      <ul class="error">
+        <% errors.array().forEach(error => { %>
+          <li><%= error.msg %></li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+
+<div class="account-body">
+  <div class="account-head">
+    <h2>Account Overview</h2>
+    <div class="account-actions">
+      <a href="/account/edit" class="btn-secondary">Edit Profile</a>
+      <form action="/account/logout" method="post" style="display:inline">
+        <button class="btn-logout" type="submit">Logout</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="account-details">
+    <p>You're logged in.</p>
+    <% if (account) { %>
+      <p><span class="label">Name:</span> <strong><%= account.account_firstname %> <%= account.account_lastname %></strong></p>
+      <p><span class="label">Email:</span> <%= account.account_email %></p>
+    <% } %>
+  </div>
+
+  <div class="account-links">
+    <a href="/">Back to Home</a>
+    <a href="/account/change-password">Change password</a>
+  </div>
+</div>
+

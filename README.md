@@ -45,3 +45,24 @@ When you installed Git and cloned the remote repository in week 1, you should ha
 1. Go to http://localhost:5500 in a browser tab. Nothing should be visible as the server has not been setup to repond to that route.
 2. Add "/filename.html" to the end of the URL (replacing filename with the name of the file you moved to the public folder).
 3. You should see that page in the browser.
+
+to generate jwt access token
+Type "node", press "Enter".
+Type "require('crypto').randomBytes(64).toString('hex')", press "Enter".
+
+Register three new accounts with the following information using your registration form:
+
+account_firstname: Basic
+account_lastname: Client
+account_email: basic@340.edu
+account_password: I@mABas1cCl!3nt
+
+account_firstname: Happy
+account_lastname: Employee
+account_email: happy@340.edu
+account_password: I@mAnEmpl0y33
+
+account_firstname: Manager
+account_lastname: User
+account_email: manager@340.edu
+account_password: I@mAnAdm!n1strat0r
