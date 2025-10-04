@@ -148,4 +148,25 @@ Util.checkJWTToken = (req, res, next) => {
   }
  }
 
+/* ****************************************
+ *  Check Admin/Employee for inventory admin actions
+ *  (Task 2)
+ * **************************************** */
+Util.checkAdmin = (req, res, next) => {
+  const account = res.locals.accountData
+  if (!account) {
+    req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
+  // allow only Employee or Admin account types
+  const acctType = account.account_type || ""
+  if (acctType === "Employee" || acctType === "Admin") {
+    return next()
+  } else {
+    // not authorized for inventory admin actions
+    req.flash("notice", "You do not have permission to access that resource.")
+    return res.redirect("/account/login")
+  }
+}
+
 module.exports = Util

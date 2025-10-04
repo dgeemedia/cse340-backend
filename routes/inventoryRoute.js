@@ -11,26 +11,68 @@ router.get("/", utilities.handleErrors(invController.buildManagement))
 // JSON endpoint used by client-side JS to fetch inventory by classification
 router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
-// Add classification
-router.get("/add-classification", utilities.handleErrors(invController.buildAddClassification))
-router.post("/add-classification", utilities.handleErrors(invController.addClassification))
+/* -------------------------
+   Administrative routes (protected)
+   ------------------------- */
+// Add classification (protected)
+router.get(
+  "/add-classification",
+  utilities.checkAdmin, // <-- ADDED: restrict to Employee/Admin
+  utilities.handleErrors(invController.buildAddClassification)
+)
+router.post(
+  "/add-classification",
+  utilities.checkAdmin, // <-- ADDED
+  utilities.handleErrors(invController.addClassification)
+)
 
-// Add inventory
-router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory))
-// validate then controller
-router.post("/add-inventory", invValidate.newInventoryRules(), invValidate.checkInventoryData, utilities.handleErrors(invController.addInventory))
+// Add inventory (protected)
+router.get(
+  "/add-inventory",
+  utilities.checkAdmin, // <-- ADDED
+  utilities.handleErrors(invController.buildAddInventory)
+)
+// validate then controller (protected)
+router.post(
+  "/add-inventory",
+  utilities.checkAdmin, // <-- ADDED
+  invValidate.newInventoryRules(),
+  invValidate.checkInventoryData,
+  utilities.handleErrors(invController.addInventory)
+)
 
-// Edit inventory (show edit form)
-router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView))
-// Update inventory (form POST) — validation for updates
-router.post("/update", invValidate.newInventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
+// Edit inventory (show edit form) (protected)
+router.get(
+  "/edit/:inv_id",
+  utilities.checkAdmin, // <-- ADDED
+  utilities.handleErrors(invController.editInventoryView)
+)
+// Update inventory (form POST) — validation for updates (protected)
+router.post(
+  "/update",
+  utilities.checkAdmin, // <-- ADDED
+  invValidate.newInventoryRules(),
+  invValidate.checkUpdateData,
+  utilities.handleErrors(invController.updateInventory)
+)
 
-// Delete confirmation (show confirmation view)
-router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteConfirmView))
-// Delete (perform delete)
-router.post("/delete", utilities.handleErrors(invController.deleteInventory))
+// Delete confirmation (show confirmation view) (protected)
+router.get(
+  "/delete/:inv_id",
+  utilities.checkAdmin, // <-- ADDED
+  utilities.handleErrors(invController.deleteConfirmView)
+)
+// Delete (perform delete) (protected)
+router.post(
+  "/delete",
+  utilities.checkAdmin, // <-- ADDED
+  utilities.handleErrors(invController.deleteInventory)
+)
 
-// type and detail classification
+/* -------------------------
+   Public routes
+   ------------------------- */
+// type and detail classification (public)
 router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId))
 router.get("/detail/:invId", utilities.handleErrors(invController.buildByInventoryId))
 

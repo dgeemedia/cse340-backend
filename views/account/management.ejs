@@ -1,40 +1,56 @@
-<!--views/account/management.ejs-->
+<!-- views/account/management.ejs -->
 <div class="account-page">
   <h1 class="account-title"><%= title %></h1>
 
-<!--Flash removed and moved to layout-->
+  <% if (errors) { %>
+    <ul class="error">
+      <% errors.array().forEach(error => { %>
+        <li><%= error.msg %></li>
+      <% }) %>
+    </ul>
+  <% } %>
 
-    <% if (errors) { %>
-      <ul class="error">
-        <% errors.array().forEach(error => { %>
-          <li><%= error.msg %></li>
-        <% }) %>
-      </ul>
+  <div class="account-body">
+    <div class="account-head">
+      <!-- Greeting: always show first name -->
+      <% if (account && account.account_firstname) { %>
+        <h2>Welcome <%= account.account_firstname %></h2>
+      <% } else { %>
+        <h2>Account Overview</h2>
+      <% } %>
+
+      <div class="account-actions">
+        <!-- update account link (Task 3) -->
+        <% if (account && account.account_id) { %>
+          <a href="/account/edit/<%= account.account_id %>" class="btn-secondary">Update account information</a>
+        <% } %>
+
+        <!-- show Logout only as a form (already in header); keep a fallback here if needed -->
+        <form action="/account/logout" method="post" style="display:inline">
+          <button class="btn-logout" type="submit">Logout</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- If Employee or Admin show Inventory Management link -->
+    <% if (account && (account.account_type === "Employee" || account.account_type === "Admin")) { %>
+      <h3>Inventory Management</h3>
+      <p><a href="/inv/">Go to Inventory Management</a></p>
     <% } %>
-  </div>
 
-<div class="account-body">
-  <div class="account-head">
-    <h2>Account Overview</h2>
-    <div class="account-actions">
-      <a href="/account/edit" class="btn-secondary">Edit Profile</a>
-      <form action="/account/logout" method="post" style="display:inline">
-        <button class="btn-logout" type="submit">Logout</button>
-      </form>
+    <div class="account-details">
+      <% if (account) { %>
+        <p><span class="label">Name:</span> <strong><%= account.account_firstname %> <%= account.account_lastname %></strong></p>
+        <p><span class="label">Email:</span> <%= account.account_email %></p>
+        <p><span class="label">Account Type:</span> <%= account.account_type %></p>
+      <% } else { %>
+        <p>You are not logged in.</p>
+      <% } %>
+    </div>
+
+    <div class="account-links">
+      <a href="/">Back to Home</a>
+      <a href="/account/change-password">Change password</a>
     </div>
   </div>
-
-  <div class="account-details">
-    <p>You're logged in.</p>
-    <% if (account) { %>
-      <p><span class="label">Name:</span> <strong><%= account.account_firstname %> <%= account.account_lastname %></strong></p>
-      <p><span class="label">Email:</span> <%= account.account_email %></p>
-    <% } %>
-  </div>
-
-  <div class="account-links">
-    <a href="/">Back to Home</a>
-    <a href="/account/change-password">Change password</a>
-  </div>
 </div>
-
