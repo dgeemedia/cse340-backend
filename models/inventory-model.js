@@ -19,6 +19,7 @@ async function getInventoryByClassificationId(classification_id) {
     return data.rows
   } catch (error) {
     console.error("getclassificationsbyid error " + error)
+    throw error
   }
 }
 
@@ -53,7 +54,6 @@ async function addClassification(classification_name) {
 
 // add inventory item
 async function addInventoryItem(inv) {
-
   try {
     const sql = `INSERT INTO public.inventory
       (inv_make, inv_model, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, inv_body, inv_transmission, inv_year, classification_id)
@@ -79,10 +79,69 @@ async function addInventoryItem(inv) {
   }
 }
 
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+async function updateInventory(
+  inv_id,
+  inv_make,
+  inv_model,
+  inv_description,
+  inv_image,
+  inv_thumbnail,
+  inv_price,
+  inv_year,
+  inv_miles,
+  inv_color,
+  classification_id,
+  inv_transmission = null,
+  inv_body = null
+) {
+  try {
+    const sql =
+      `UPDATE public.inventory
+       SET inv_make = $1,
+           inv_model = $2,
+           inv_description = $3,
+           inv_image = $4,
+           inv_thumbnail = $5,
+           inv_price = $6,
+           inv_year = $7,
+           inv_miles = $8,
+           inv_color = $9,
+           classification_id = $10,
+           inv_transmission = $11,
+           inv_body = $12
+       WHERE inv_id = $13
+       RETURNING *`
+    const params = [
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+      inv_transmission,
+      inv_body,
+      inv_id
+    ]
+    const result = await pool.query(sql, params)
+    return result.rows[0]
+  } catch (error) {
+    console.error("model error (updateInventory): " + error)
+    throw error
+  }
+}
+
 module.exports = {
   getClassifications,
   getInventoryByClassificationId,
   getInventoryById,
   addClassification,
   addInventoryItem,
+  updateInventory,
 }

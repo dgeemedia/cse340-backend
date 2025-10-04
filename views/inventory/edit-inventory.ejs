@@ -4,9 +4,7 @@
     <h1 class="page-title"><%= title %></h1>
   </div>
 
-  <div class="flash-messages">
-    <%- messages() %>
-  </div>
+<!--Flash removed and moved to layout-->
 
   <% if (errors && errors.length) { %>
     <ul class="form-errors">
@@ -16,10 +14,11 @@
     </ul>
   <% } %>
 
-  <form action="/inv/update" method="post" class="account-form">
+  <!-- CHANGES: added id="updateForm" so public/js/inv-update.js can enable the button on change -->
+    <form id="updateForm" action="/inv/update" method="post" class="account-form">
     <!-- hidden id -->
     <input type="hidden" name="inv_id" value="<%= inv_id %>" />
-
+    
     <div class="form-row">
       <label for="classificationList">Classification <span class="required">*</span></label>
       <%- classificationSelect %>
@@ -71,7 +70,9 @@
     </div>
 
     <div class="form-row">
-      <button type="submit" class="btn-primary">Update Vehicle</button>
+      <!-- CHANGES: button starts disabled so user must change at least one input to enable -->
+      <button type="submit" class="btn-primary" disabled>Update Vehicle</button>
     </div>
   </form>
 </div>
+<script src="/js/inv-update.js"></script>

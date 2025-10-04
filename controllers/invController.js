@@ -1,4 +1,4 @@
-//controllers/invController.js
+// controllers/invController.js
 const invModel = require("../models/inventory-model")
 const utilities = require("../utilities/")
 
@@ -94,7 +94,14 @@ invCont.addClassification = async function (req, res, next) {
       // rebuild nav so new classification appears immediately
       const newNav = await utilities.getNav()
       req.flash("success", `Classification "${classification_name}" added successfully.`)
-      return res.render("inventory/manage", { title: "Inventory Management", nav: newNav })
+
+      // CHANGED: add classificationSelect so manage.ejs has the variable it expects
+      const classificationSelect = await utilities.buildClassificationList()
+      return res.render("inventory/manage", {
+        title: "Inventory Management",
+        nav: newNav,
+        classificationSelect,
+      })
     } else {
       req.flash("error", "Failed to add classification.")
       return res.status(500).render("inventory/add-classification", { title: "Add Classification", nav })
@@ -168,7 +175,14 @@ invCont.addInventory = async function (req, res, next) {
     if (result && result.rowCount > 0) {
       const newNav = await utilities.getNav()
       req.flash("success", `Inventory item ${inv.inv_make} ${inv.inv_model} added successfully.`)
-      return res.render("inventory/manage", { title: "Inventory Management", nav: newNav })
+
+      // CHANGED: add classificationSelect so manage.ejs has the variable it expects
+      const classificationSelect = await utilities.buildClassificationList()
+      return res.render("inventory/manage", {
+        title: "Inventory Management",
+        nav: newNav,
+        classificationSelect,
+      })
     } else {
       req.flash("error", "Failed to add inventory item.")
       return res.status(500).render("inventory/add-inventory", {
@@ -231,72 +245,75 @@ invCont.editInventoryView = async function (req, res, next) {
 invCont.updateInventory = async function (req, res, next) {
   try {
     const nav = await utilities.getNav()
-    // keep the currently selected classification sticky
-    const classificationList = await utilities.buildClassificationList(req.body.classification_id)
+    const {
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+      inv_transmission,
+      inv_body,
+    } = req.body
 
-    // collect fields (note inv_id comes from a hidden input)
-    const inv = {
-      inv_id: parseInt(req.body.inv_id, 10),
-      inv_make: req.body.inv_make,
-      inv_model: req.body.inv_model,
-      inv_description: req.body.inv_description || "",
-      inv_image: req.body.inv_image || "/images/vehicles/no-image.png",
-      inv_thumbnail: req.body.inv_thumbnail || "/images/vehicles/no-image-tn.png",
-      inv_price: req.body.inv_price,
-      inv_miles: req.body.inv_miles,
-      inv_color: req.body.inv_color,
-      inv_body: req.body.inv_body || null,
-      inv_transmission: req.body.inv_transmission || null,
-      inv_year: req.body.inv_year,
-      classification_id: req.body.classification_id,
-    }
+    // attempt update — calls model.updateInventory (returns updated row)
+    const updateResult = await invModel.updateInventory(
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+      inv_transmission,
+      inv_body
+    )
 
-    // server-side validation (same rules as addInventory)
-    const errors = []
-    if (!inv.inv_make) errors.push({ msg: "Make is required" })
-    if (!inv.inv_model) errors.push({ msg: "Model is required" })
-    if (!inv.classification_id) errors.push({ msg: "Classification is required" })
-    if (!inv.inv_price || isNaN(Number(inv.inv_price))) errors.push({ msg: "Price is required and must be a number" })
-    if (inv.inv_year && isNaN(Number(inv.inv_year))) errors.push({ msg: "Year must be numeric" })
+    if (updateResult && updateResult.inv_id) {
+      const itemName = `${updateResult.inv_make} ${updateResult.inv_model}`
+      req.flash('success', `The ${itemName} was successfully updated.`)
 
-    if (errors.length > 0) {
-      req.flash("error", "Please fix the errors below.")
-      // preserve the same locals that editInventoryView renders so the form is sticky
-      return res.status(400).render("inventory/edit-inventory", {
-        title: req.body.inv_make && req.body.inv_model ? `Edit ${req.body.inv_make} ${req.body.inv_model}` : "Edit Inventory Item",
-        nav,
-        classificationSelect: classificationList,
-        errors,
-        inv_id: inv.inv_id,
-        inv_make: inv.inv_make,
-        inv_model: inv.inv_model,
-        inv_year: inv.inv_year,
-        inv_description: inv.inv_description,
-        inv_image: inv.inv_image,
-        inv_thumbnail: inv.inv_thumbnail,
-        inv_price: inv.inv_price,
-        inv_miles: inv.inv_miles,
-        inv_color: inv.inv_color,
-        classification_id: inv.classification_id,
-        inv_transmission: inv.inv_transmission,
-        inv_body: inv.inv_body
-      })
-    }
-
-    // attempt update - NOTE: your model must implement updateInventoryItem(inv)
-    const result = await invModel.updateInventoryItem(inv)
-    if (result && result.rowCount > 0) {
+      // build classificationSelect so manage.ejs has the variable it expects
+      const classificationSelect = await utilities.buildClassificationList()
       const newNav = await utilities.getNav()
-      req.flash("success", `Inventory item ${inv.inv_make} ${inv.inv_model} updated successfully.`)
-      return res.render("inventory/manage", { title: "Inventory Management", nav: newNav })
+
+      return res.render('inventory/manage', {
+        title: 'Inventory Management',
+        nav: newNav,
+        classificationSelect,
+      })
     } else {
-      req.flash("error", "Failed to update inventory item.")
+      // fallback: re-render edit view with sticky data
+      const classificationSelect = await utilities.buildClassificationList(classification_id)
+      const itemName = `${inv_make} ${inv_model}`
+      req.flash("error", "Sorry, the update failed.")
       return res.status(500).render("inventory/edit-inventory", {
-        title: `Edit ${inv.inv_make} ${inv.inv_model}`,
+        title: "Edit " + itemName,
         nav,
-        classificationSelect: classificationList,
+        classificationSelect,
         errors: [{ msg: "Database update failed" }],
-        ...inv
+        inv_id,
+        inv_make,
+        inv_model,
+        inv_year,
+        inv_description,
+        inv_image,
+        inv_thumbnail,
+        inv_price,
+        inv_miles,
+        inv_color,
+        classification_id,
+        inv_transmission,
+        inv_body
       })
     }
   } catch (error) {

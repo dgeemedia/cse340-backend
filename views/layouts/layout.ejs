@@ -9,6 +9,10 @@
         <%- include("../partials/header") %>
         <%- include("../partials/navigation") %>
         
+        <!-- Render flash messages once, globally -->
+        <div class="flash-messages">
+        <%- messages() %>
+        
         <main>
             <%- body %>
         </main>

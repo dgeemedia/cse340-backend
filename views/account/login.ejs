@@ -2,10 +2,7 @@
 <div class="account-page">
   <h1 class="account-title"><%= title %></h1>
 
-  <!-- flash / express-messages -->
-  <div class="flash-messages">
-    <%- messages() %>
-  </div>
+<!--Flash removed and moved to layout-->
 
   <form id="loginForm" action="/account/login" method="post" class="account-form">
     <div class="form-row">
