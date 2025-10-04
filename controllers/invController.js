@@ -321,4 +321,73 @@ invCont.updateInventory = async function (req, res, next) {
   }
 }
 
+/* ***************************
+ *  Build delete confirmation view
+ * ************************** */
+invCont.deleteConfirmView = async function (req, res, next) {
+  try {
+    const inv_id = parseInt(req.params.inv_id, 10)
+    const nav = await utilities.getNav()
+    const itemData = await invModel.getInventoryById(inv_id)
+    if (!itemData) {
+      req.flash("error", "That vehicle was not found.")
+      return res.redirect("/inv/")
+    }
+    const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
+    const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+    res.render("inventory/delete-confirm", {
+      title: "Delete " + itemName,
+      nav,
+      classificationSelect, // optional if you want to show the select (not required)
+      errors: null,
+      inv_id: itemData.inv_id,
+      inv_make: itemData.inv_make,
+      inv_model: itemData.inv_model,
+      inv_year: itemData.inv_year,
+      inv_price: itemData.inv_price,
+      // other fields can be included if desired
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Delete Inventory Item (POST)
+ * ************************** */
+invCont.deleteInventory = async function (req, res, next) {
+  try {
+    // parse inv_id from body
+    const inv_id = parseInt(req.body.inv_id, 10)
+    if (!inv_id || Number.isNaN(inv_id)) {
+      req.flash("error", "Invalid vehicle id.")
+      return res.redirect("/inv/")
+    }
+
+    // call model function that deletes the item
+    const deleteResult = await invModel.deleteInventoryItem(inv_id)
+
+    // deleteResult.rowCount will hold number of rows deleted (Postgres)
+    if (deleteResult && deleteResult.rowCount > 0) {
+      req.flash("success", "The vehicle was successfully deleted.")
+      const newNav = await utilities.getNav()
+      // build classificationSelect so manage view has the variable it expects
+      const classificationSelect = await utilities.buildClassificationList()
+      return res.render("inventory/manage", {
+        title: "Inventory Management",
+        nav: newNav,
+        classificationSelect,
+      })
+    } else {
+      // delete failed
+      req.flash("error", "Sorry, the delete failed.")
+      // redirect back to confirmation page for the same item
+      return res.redirect(`/inv/delete/${inv_id}`)
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 module.exports = invCont

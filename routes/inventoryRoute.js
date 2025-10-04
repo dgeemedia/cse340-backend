@@ -1,3 +1,4 @@
+//routes/inventoryRoute.js
 const express = require("express")
 const router = new express.Router()
 const invController = require("../controllers/invController")
@@ -23,6 +24,11 @@ router.post("/add-inventory", invValidate.newInventoryRules(), invValidate.check
 router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView))
 // Update inventory (form POST) — validation for updates
 router.post("/update", invValidate.newInventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
+
+// Delete confirmation (show confirmation view)
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteConfirmView))
+// Delete (perform delete)
+router.post("/delete", utilities.handleErrors(invController.deleteInventory))
 
 // type and detail classification
 router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId))

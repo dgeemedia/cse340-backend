@@ -1,0 +1,45 @@
+<!-- views/inventory/delete-confirm.ejs -->
+<div class="container inventory-page">
+  <div class="page-intro">
+    <h1 class="page-title"><%= title %></h1>
+  </div>
+
+  <% if (errors && errors.length) { %>
+    <ul class="form-errors">
+      <% errors.forEach(function(err){ %>
+        <li><%= err.msg %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <p>Confirm Deletion - This action is permanent and cannot be undone.</p>
+
+  <form action="/inv/delete" method="post" class="account-form">
+    <!-- hidden id -->
+    <input type="hidden" name="inv_id" value="<%= inv_id %>" />
+
+    <div class="form-row">
+      <label>Make</label>
+      <input id="inv_make" name="inv_make" type="text" readonly value="<%= typeof inv_make !== 'undefined' ? inv_make : '' %>" />
+    </div>
+
+    <div class="form-row">
+      <label>Model</label>
+      <input id="inv_model" name="inv_model" type="text" readonly value="<%= typeof inv_model !== 'undefined' ? inv_model : '' %>" />
+    </div>
+
+    <div class="form-row">
+      <label>Year</label>
+      <input id="inv_year" name="inv_year" type="number" readonly value="<%= typeof inv_year !== 'undefined' ? inv_year : '' %>" />
+    </div>
+
+    <div class="form-row">
+      <label>Price</label>
+      <input id="inv_price" name="inv_price" type="text" readonly value="<%= typeof inv_price !== 'undefined' ? inv_price : '' %>" />
+    </div>
+
+    <div class="form-row">
+      <button type="submit" class="btn-primary">Delete Vehicle</button>
+    </div>
+  </form>
+</div>
