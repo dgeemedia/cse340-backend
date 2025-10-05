@@ -124,3 +124,6 @@ ADD COLUMN inv_body VARCHAR(100);
 
 ALTER TABLE public.inventory
 ADD COLUMN inv_transmission VARCHAR(50);
+
+-- Run this first (must be committed before the UPDATE)
+ALTER TYPE account_type ADD VALUE 'Manager';

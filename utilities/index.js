@@ -158,9 +158,9 @@ Util.checkAdmin = (req, res, next) => {
     req.flash("notice", "Please log in.")
     return res.redirect("/account/login")
   }
-  // allow only Employee or Admin account types
-  const acctType = account.account_type || ""
-  if (acctType === "Employee" || acctType === "Admin") {
+  // allow only Employee, Manager or Admin account types
+  const acctType = (account.account_type || "").toLowerCase()
+  if (acctType === "employee" || acctType === "manager" || acctType === "admin") {
     return next()
   } else {
     // not authorized for inventory admin actions
