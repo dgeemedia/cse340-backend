@@ -4,22 +4,16 @@ const router = express.Router()
 const utilities = require('../utilities')
 const messagesController = require('../controllers/messagesController')
 
-// require login for all message routes
-router.use(utilities.checkLogin)
+// All pages require login
+router.get('/compose', utilities.checkLogin, utilities.handleErrors(messagesController.composeView))
+router.post('/send', utilities.checkLogin, utilities.handleErrors(messagesController.sendMessage))
 
-// inbox/outbox/view
-router.get('/inbox', utilities.handleErrors(messagesController.inboxView))
-router.get('/outbox', utilities.handleErrors(messagesController.outboxView))
-router.get('/view/:message_id', utilities.handleErrors(messagesController.viewMessage))
+router.get('/inbox', utilities.checkLogin, utilities.handleErrors(messagesController.inboxView))
+router.get('/outbox', utilities.checkLogin, utilities.handleErrors(messagesController.outboxView))
+router.get('/view/:message_id', utilities.checkLogin, utilities.handleErrors(messagesController.viewMessage))
 
-// compose + send
-router.get('/compose', utilities.handleErrors(messagesController.composeView))
-router.post('/send', utilities.handleErrors(messagesController.sendMessage))
-
-// AJAX mark-read
-router.post('/mark-read', utilities.handleErrors(messagesController.markRead))
-
-// delete
-router.post('/delete', utilities.handleErrors(messagesController.deleteMessageHandler))
+// AJAX endpoints (allow JSON)
+router.post('/mark-read', utilities.checkLogin, utilities.handleErrors(messagesController.markReadHandler))
+router.post('/delete', utilities.checkLogin, utilities.handleErrors(messagesController.deleteHandler))
 
 module.exports = router

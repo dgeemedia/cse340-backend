@@ -18,7 +18,7 @@ router.post("/update", utilities.checkLogin, utilities.handleErrors(reviewsContr
 // Delete
 router.post("/delete", utilities.checkLogin, utilities.handleErrors(reviewsController.deleteReview))
 
-// create reply (only staff -> controller double-checks role)
+// create reply
 router.post('/reply', utilities.checkLogin, utilities.handleErrors(reviewsController.addReply))
 
 module.exports = router

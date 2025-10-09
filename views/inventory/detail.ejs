@@ -1,4 +1,4 @@
-<!-- views/inventory/detail.ejs -->
+<!--views/inventory/detail.ejs-->
 <div class="container">
   <% if (!detail && !detailHtml) { %>
     <h1>Vehicle details</h1>
@@ -59,61 +59,67 @@
 
     <% } %>
 
-    <!-- Reviews section -->
-    <section id="reviews" style="margin-top:24px;">
-      <h2>Reviews</h2>
+<!-- Reviews section -->
+<section id="reviews" style="margin-top:24px;">
+  <h2>Reviews</h2>
 
-      <% if (typeof avgRating !== 'undefined' && avgRating !== null) { %>
-        <p class="muted">Average rating: <strong><%= Number(avgRating).toFixed(1) %></strong> — <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</p>
-      <% } %>
+  <% if (typeof avgRating !== 'undefined' && avgRating !== null) { %>
+    <p class="muted">Average rating: <strong><%= Number(avgRating).toFixed(1) %></strong> — <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</p>
+  <% } %>
 
-      <!-- Review form (only for logged-in users) -->
-      <% if (typeof loggedin !== 'undefined' && loggedin) { %>
-        <form id="reviewForm" action="/reviews/add" method="post" class="card" style="max-width:720px; margin-bottom:18px;">
-          <input type="hidden" name="inv_id" value="<%= detail ? detail.inv_id : '' %>">
-          <div class="form-row">
-            <label for="rating">Rating</label>
-            <select name="rating" id="rating">
-              <option value="5">5 — Excellent</option>
-              <option value="4">4 — Good</option>
-              <option value="3">3 — Okay</option>
-              <option value="2">2 — Poor</option>
-              <option value="1">1 — Terrible</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="comment">Comment</label>
-            <textarea id="comment" name="comment" rows="4" placeholder="Share your experience..."></textarea>
-          </div>
-          <div class="form-row">
-            <button class="btn-primary" type="submit">Submit review</button>
-          </div>
-        </form>
-      <% } else { %>
-        <p><a href="/account/login">Sign in</a> to leave a review.</p>
-      <% } %>
+  <!-- Review form (only for logged-in users) -->
+  <% if (typeof loggedin !== 'undefined' && loggedin) { %>
+    <form id="reviewForm" action="/reviews/add" method="post" class="card" style="max-width:720px; margin-bottom:18px;">
+      <input type="hidden" name="inv_id" value="<%= detail ? detail.inv_id : '' %>">
+      <div class="form-row">
+        <label for="rating">Rating</label>
+        <select name="rating" id="rating">
+          <option value="5">5 — Excellent</option>
+          <option value="4">4 — Good</option>
+          <option value="3">3 — Okay</option>
+          <option value="2">2 — Poor</option>
+          <option value="1">1 — Terrible</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="comment">Comment</label>
+        <textarea id="comment" name="comment" rows="4" placeholder="Share your experience..."></textarea>
+      </div>
+      <div class="form-row">
+        <button class="btn-primary" type="submit">Submit review</button>
+      </div>
+    </form>
+  <% } else { %>
+    <p><a href="/account/login">Sign in</a> to leave a review.</p>
+  <% } %>
 
-      <!-- Recent reviews list (server-provided fallback) -->
-      <div id="reviewsList" style="max-width:720px;">
-        <% if (Array.isArray(recentReviews) && recentReviews.length) { %>
-          <ul style="list-style:none; padding:0; margin:0;">
-            <% recentReviews.forEach(rv => { %>
-              <li class="card" style="margin-bottom:10px; padding:10px;">
-                <div style="display:flex; gap:12px; align-items:flex-start;">
-                  <div style="flex:1 1 auto;">
-                    <strong><%= rv.account_firstname %> <%= rv.account_lastname %></strong>
-                    <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-                      <span class="stars" aria-hidden="true" title="Rating: <%= rv.rating %>">
-                        <% for (let s = 1; s <= 5; s++) { %>
-                          <% if (s <= rv.rating) { %>&#9733;<% } else { %>&#9734;<% } %>
-                        <% } %>
-                      </span>
-                      <span class="muted" style="font-size:0.9rem;">— <%= new Date(rv.created_at).toLocaleString() %></span>
-                    </div>
-                    <p style="margin-top:8px;"><%= rv.comment %></p>
+  <!-- Recent reviews list (server-provided fallback) -->
+  <div id="reviewsList" style="max-width:720px;">
+    <% if (Array.isArray(recentReviews) && recentReviews.length) { %>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <% recentReviews.forEach(rv => { %>
+          <li class="card" style="margin-bottom:10px; padding:10px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="flex:1 1 auto;">
+                <strong><%= rv.account_firstname %> <%= rv.account_lastname %></strong>
 
-                    <!-- replies -->
-                    <% if (Array.isArray(rv.replies) && rv.replies.length) { %>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                  <span class="stars" aria-hidden="true" title="Rating: <%= rv.rating %>">
+                    <% for (let s = 1; s <= 5; s++) { %>
+                      <% if (s <= rv.rating) { %>&#9733;<% } else { %>&#9734;<% } %>
+                    <% } %>
+                  </span>
+                  <span class="muted" style="font-size:0.9rem;">— <%= new Date(rv.created_at).toLocaleString() %></span>
+                </div>
+
+                <p style="margin-top:8px;"><%= rv.comment %></p>
+
+                <!-- replies (compact: hidden until viewed) -->
+                <% if (Array.isArray(rv.replies) && rv.replies.length) { %>
+                  <div class="replies-wrap" style="margin-top:12px;">
+                    <button class="btn view-replies-btn" data-review-id="<%= rv.review_id %>">View replies (<%= rv.replies.length %>)</button>
+
+                    <div class="replies-list" data-review-id="<%= rv.review_id %>" style="display:none; margin-top:8px;">
                       <% rv.replies.forEach(reply => { %>
                         <div class="review-reply" style="margin-top:10px; margin-left:6px; padding-left:10px; border-left:2px solid rgba(31,45,61,0.04);">
                           <div class="reply-meta" style="font-size:0.9rem; color:var(--muted);">
@@ -123,32 +129,53 @@
                           <div class="reply-text" style="margin-top:6px;"><%= reply.reply_text %></div>
                         </div>
                       <% }) %>
-                    <% } %>
-
-                    <!-- reply form (only for Employee/Manager) -->
-                    <% if (account && ( (account.account_type || '').toLowerCase() === 'employee' || (account.account_type || '').toLowerCase() === 'manager' )) { %>
-                      <form action="/reviews/reply" method="post" class="reply-form" style="margin-top:10px;">
-                        <input type="hidden" name="review_id" value="<%= rv.review_id %>">
-                        <input type="hidden" name="inv_id" value="<%= rv.inv_id %>">
-                        <div class="form-row">
-                          <textarea name="reply_text" rows="2" placeholder="Write a reply..." style="width:100%; padding:8px; border-radius:8px;"></textarea>
-                        </div>
-                        <div class="form-row" style="margin-top:6px;">
-                          <button class="btn" type="submit">Post Reply</button>
-                        </div>
-                      </form>
-                    <% } %>
+                    </div>
                   </div>
-                </div>
-              </li>
-            <% }) %>
-          </ul>
+                <% } else { %>
+                  <div class="replies-wrap" style="margin-top:12px;">
+                    <button class="btn view-replies-btn" data-review-id="<%= rv.review_id %>">View replies (0)</button>
+                    <div class="replies-list" data-review-id="<%= rv.review_id %>" style="display:none; margin-top:8px;"></div>
+                  </div>
+                <% } %>
 
-        <% } else { %>
-          <p class="muted">No reviews yet. Be the first to review this vehicle!</p>
-        <% } %>
-      </div>
-    </section>
+                <!-- Reply toggle (any logged-in user) -->
+                <div style="margin-top:8px;">
+                  <% if (typeof accountData !== 'undefined' && accountData) { %>
+                    <button type="button" class="btn reply-toggle-btn" data-review-id="<%= rv.review_id %>">Reply</button>
+                  <% } else { %>
+                    <a href="/account/login">Sign in to reply</a>
+                  <% } %>
+                </div>
+
+                <!-- hidden reply form (toggled by JS) -->
+                <div class="reply-form-wrap" data-review-id="<%= rv.review_id %>" style="display:none; margin-top:8px;">
+                  <form class="reply-post-form" action="/reviews/reply" method="post" data-review-id="<%= rv.review_id %>">
+                    <input type="hidden" name="review_id" value="<%= rv.review_id %>">
+                    <input type="hidden" name="inv_id" value="<%= rv.inv_id %>">
+                    <input type="hidden" name="parent_reply_id" value="">
+                    <div class="form-row">
+                      <textarea name="reply_text" rows="3" style="width:100%; padding:8px; border-radius:8px;" placeholder="Write a reply..."></textarea>
+                      <div class="muted" style="font-size:0.85rem; margin-top:6px;">Press Enter to send, Shift+Enter for newline.</div>
+                    </div>
+                    <div class="form-row" style="margin-top:6px;">
+                      <button class="btn" type="submit">Post Reply</button>
+                      <button class="btn" type="button" data-cancel-review="<%= rv.review_id %>">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="muted">No reviews yet. Be the first to review this vehicle!</p>
+    <% } %>
+  </div>
+</section>
 
   <% } %>
 </div>
+
+<script src="/js/account-reviews.js"></script>

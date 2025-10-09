@@ -23,11 +23,15 @@
     </div>
 
     <!-- site JS -->
-    <!-- expose current user id (for client logic) -->
+<!-- expose current user id + name (safe JSON encoding) -->
 <script>
   // safe JSON-encoded user id (null if not logged in)
   window.CURRENT_USER_ID = <%- JSON.stringify((typeof accountData !== 'undefined' && accountData && accountData.account_id) ? accountData.account_id : null) %>;
+
+  // safe JSON-encoded user display name (empty string if not available)
+  window.CURRENT_USER_NAME = <%- JSON.stringify((typeof accountData !== 'undefined' && accountData && accountData.account_firstname) ? accountData.account_firstname : '') %>;
 </script>
+
 
     <!-- socket.io client (auto-served by socket.io server) -->
     <script src="/socket.io/socket.io.js"></script>
