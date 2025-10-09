@@ -1244,3 +1244,25 @@ nav a.active {
   .table-card thead { display:none; } /* stacked table approach for narrow screens */
   .table-card tbody td { display:block; padding:12px; border-bottom:1px solid rgba(31,45,61,0.06); }
 }
+
+/* star rating */
+.stars {
+  color: #ffb020;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-block;
+  letter-spacing: 0.04em;
+}
+.review-reply {
+  margin-left: 12px;
+  border-left: 2px solid rgba(0,0,0,0.04);
+  padding-left: 10px;
+  margin-top: 8px;
+  color: #333;
+}
+.reply-meta {
+  font-size: 0.9rem;
+  color: #6b737b;
+}
+.reply-text { margin-top:6px; }
+.reply-form { margin-top:8px; }

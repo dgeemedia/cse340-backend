@@ -22,43 +22,40 @@ invCont.buildByClassificationId = async function (req, res, next) {
 invCont.buildByInventoryId = async function (req, res, next) {
   try {
     const invId = parseInt(req.params.invId, 10)
-    if (!invId || Number.isNaN(invId)) {
-      const nav = await utilities.getNav()
-      req.flash('error', 'Invalid vehicle id.')
-      return res.redirect('/inv')
-    }
-
     const vehicle = await invModel.getInventoryById(invId)
     if (!vehicle) {
-      const nav = await utilities.getNav()
+      let nav = await utilities.getNav()
       return res.status(404).render("./inventory/detail", {
         title: "Vehicle not found",
         nav,
-        detailHtml: '<p class="notice">Sorry, that vehicle could not be found.</p>',
         detail: null,
       })
     }
 
-    // fetch average rating + review count and a few recent reviews
     const reviewsModel = require("../models/reviews-model")
+    const repliesModel = require("../models/review-replies-model")
+
     const avgObj = await reviewsModel.getAverageRatingByInventory(invId)
-    const recentReviews = await reviewsModel.getReviewsByInventory(invId, 5, 0)
+    const recentReviews = await reviewsModel.getReviewsByInventory(invId, 10, 0)
 
-    // preserve old utility HTML for backwards compatibility
-    const detailHtml = await utilities.buildInventoryDetail(vehicle)
+    // attach replies to each review
+    const reviewsWithReplies = await Promise.all(
+      recentReviews.map(async (r) => {
+        const replies = await repliesModel.getRepliesByReview(r.review_id)
+        return { ...r, replies }
+      })
+    )
+
     const nav = await utilities.getNav()
-
     res.render("./inventory/detail", {
       title: `${vehicle.inv_make} ${vehicle.inv_model}`,
       nav,
-      // object form (for templates that reference detail.inv_id etc.)
-      detail: vehicle,
-      // HTML fragment (for templates that previously used `detail` string)
-      detailHtml,
-      // review metadata
-      avgRating: avgObj.avg_rating,
-      reviewCount: avgObj.count,
-      recentReviews,
+      detail: vehicle, // object use in template
+      avgRating: avgObj ? avgObj.avg_rating : null,
+      reviewCount: avgObj ? avgObj.count : 0,
+      recentReviews: reviewsWithReplies,
+      loggedin: res.locals.loggedin,
+      account: res.locals.accountData || null,
     })
   } catch (error) {
     next(error)

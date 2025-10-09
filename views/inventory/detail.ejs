@@ -21,8 +21,18 @@
         <div class="vehicle-info" style="flex:1 1 320px; min-width:260px;">
           <h1><%= detail.inv_make %> <%= detail.inv_model %> <small style="font-weight:600; color:var(--muted);">(<%= detail.inv_year || 'N/A' %>)</small></h1>
 
-          <% if (typeof avgRating !== 'undefined') { %>
-            <p class="muted">Average rating: <strong><%= avgRating %></strong> (<%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> reviews)</p>
+          <% if (typeof avgRating !== 'undefined' && avgRating !== null) { 
+               const avgRound = Math.round(Number(avgRating));
+          %>
+            <p class="muted" style="margin:6px 0;">
+              <span class="stars" aria-hidden="true" title="Average rating: <%= Number(avgRating).toFixed(1) %>">
+                <% for (let s = 1; s <= 5; s++) { %>
+                  <% if (s <= avgRound) { %>&#9733;<% } else { %>&#9734;<% } %>
+                <% } %>
+              </span>
+              <strong style="margin-left:8px;">(<%= Number(avgRating).toFixed(1) %>)</strong>
+              <span style="color:var(--muted); margin-left:8px;">— <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</span>
+            </p>
           <% } %>
 
           <% if (detail.inv_price) { %>
@@ -53,8 +63,8 @@
     <section id="reviews" style="margin-top:24px;">
       <h2>Reviews</h2>
 
-      <% if (typeof avgRating !== 'undefined') { %>
-        <p class="muted">Average rating: <strong><%= avgRating %></strong> — <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</p>
+      <% if (typeof avgRating !== 'undefined' && avgRating !== null) { %>
+        <p class="muted">Average rating: <strong><%= Number(avgRating).toFixed(1) %></strong> — <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</p>
       <% } %>
 
       <!-- Review form (only for logged-in users) -->
@@ -89,16 +99,51 @@
           <ul style="list-style:none; padding:0; margin:0;">
             <% recentReviews.forEach(rv => { %>
               <li class="card" style="margin-bottom:10px; padding:10px;">
-                <div style="display:flex; justify-content:space-between; gap:8px;">
-                  <div>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                  <div style="flex:1 1 auto;">
                     <strong><%= rv.account_firstname %> <%= rv.account_lastname %></strong>
-                    <div class="muted" style="font-size:0.9rem;">Rating: <%= rv.rating %> — <%= new Date(rv.created_at).toLocaleString() %></div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                      <span class="stars" aria-hidden="true" title="Rating: <%= rv.rating %>">
+                        <% for (let s = 1; s <= 5; s++) { %>
+                          <% if (s <= rv.rating) { %>&#9733;<% } else { %>&#9734;<% } %>
+                        <% } %>
+                      </span>
+                      <span class="muted" style="font-size:0.9rem;">— <%= new Date(rv.created_at).toLocaleString() %></span>
+                    </div>
                     <p style="margin-top:8px;"><%= rv.comment %></p>
+
+                    <!-- replies -->
+                    <% if (Array.isArray(rv.replies) && rv.replies.length) { %>
+                      <% rv.replies.forEach(reply => { %>
+                        <div class="review-reply" style="margin-top:10px; margin-left:6px; padding-left:10px; border-left:2px solid rgba(31,45,61,0.04);">
+                          <div class="reply-meta" style="font-size:0.9rem; color:var(--muted);">
+                            <strong><%= reply.account_firstname || 'Staff' %> <%= reply.account_lastname || '' %></strong>
+                            <span style="margin-left:8px;">— <%= new Date(reply.created_at).toLocaleString() %></span>
+                          </div>
+                          <div class="reply-text" style="margin-top:6px;"><%= reply.reply_text %></div>
+                        </div>
+                      <% }) %>
+                    <% } %>
+
+                    <!-- reply form (only for Employee/Manager) -->
+                    <% if (account && ( (account.account_type || '').toLowerCase() === 'employee' || (account.account_type || '').toLowerCase() === 'manager' )) { %>
+                      <form action="/reviews/reply" method="post" class="reply-form" style="margin-top:10px;">
+                        <input type="hidden" name="review_id" value="<%= rv.review_id %>">
+                        <input type="hidden" name="inv_id" value="<%= rv.inv_id %>">
+                        <div class="form-row">
+                          <textarea name="reply_text" rows="2" placeholder="Write a reply..." style="width:100%; padding:8px; border-radius:8px;"></textarea>
+                        </div>
+                        <div class="form-row" style="margin-top:6px;">
+                          <button class="btn" type="submit">Post Reply</button>
+                        </div>
+                      </form>
+                    <% } %>
                   </div>
                 </div>
               </li>
             <% }) %>
           </ul>
+
         <% } else { %>
           <p class="muted">No reviews yet. Be the first to review this vehicle!</p>
         <% } %>

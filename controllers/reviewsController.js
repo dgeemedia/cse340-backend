@@ -1,5 +1,6 @@
 // controllers/reviewsController.js
 const reviewsModel = require("../models/reviews-model")
+const repliesModel = require("../models/review-replies-model")
 const utilities = require("../utilities")
 
 const reviewsController = {}
@@ -159,6 +160,37 @@ reviewsController.deleteReview = async (req, res, next) => {
     await reviewsModel.deleteReview(review_id)
     req.flash("success", "Review deleted")
     return res.redirect(`/account/`)
+  } catch (err) {
+    next(err)
+  }
+}
+
+reviewsController.addReply = async (req, res, next) => {
+  try {
+    // require login
+    const account = res.locals.accountData
+    if (!account || !account.account_id) {
+      req.flash('notice', 'Please log in.')
+      return res.redirect('/account/login')
+    }
+
+    const acctType = (account.account_type || '').toLowerCase()
+    if (acctType !== 'employee' && acctType !== 'manager') {
+      req.flash('notice', 'Only staff may reply to reviews.')
+      return res.redirect('back')
+    }
+
+    const review_id = parseInt(req.body.review_id, 10)
+    const reply_text = (req.body.reply_text || '').trim()
+    if (!review_id || !reply_text) {
+      req.flash('error', 'Missing reply text or review.')
+      return res.redirect('back')
+    }
+
+    await repliesModel.addReply(review_id, account.account_id, reply_text)
+    req.flash('success', 'Reply posted.')
+    // optionally redirect to the inventory item; you can fetch review→inv_id, but simplest is to go back.
+    return res.redirect('back')
   } catch (err) {
     next(err)
   }

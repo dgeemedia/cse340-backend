@@ -11,9 +11,14 @@ router.get("/json/:inv_id", utilities.handleErrors(reviewsController.getReviewsJ
 
 // Edit view (GET)
 router.get("/edit/:review_id", utilities.checkLogin, utilities.handleErrors(reviewsController.editView))
+
 // Update (POST)
 router.post("/update", utilities.checkLogin, utilities.handleErrors(reviewsController.updateReview))
+
 // Delete
 router.post("/delete", utilities.checkLogin, utilities.handleErrors(reviewsController.deleteReview))
+
+// create reply (only staff -> controller double-checks role)
+router.post('/reply', utilities.checkLogin, utilities.handleErrors(reviewsController.addReply))
 
 module.exports = router
