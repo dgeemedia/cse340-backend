@@ -1,52 +1,104 @@
-const pool = require("../database")
+// models/messages-model.js
+const pool = require('../database')
 
-async function sendMessage(sender_id, recipient_id, subject, body) {
-  const sql = `INSERT INTO public.messages (sender_id, recipient_id, subject, body)
-               VALUES ($1,$2,$3,$4) RETURNING *`
-  const res = await pool.query(sql, [sender_id, recipient_id, subject, body])
-  return res.rows[0]
+/**
+ * Send a message (insert)
+ * returns the inserted row
+ */
+async function sendMessage(senderId, recipientId, subject, body) {
+  const sql = `INSERT INTO public.messages (sender_id, recipient_id, subject, body, created_at)
+               VALUES ($1,$2,$3,$4, now()) RETURNING *`
+  const params = [senderId, recipientId, subject || '', body || '']
+  const { rows } = await pool.query(sql, params)
+  return rows[0]
 }
 
-async function getInbox(account_id) {
+/**
+ * Get inbox messages for a user
+ */
+async function getInbox(accountId) {
   const sql = `SELECT m.*, s.account_firstname AS sender_first, s.account_lastname AS sender_last
                FROM public.messages m
                LEFT JOIN public.account s ON m.sender_id = s.account_id
                WHERE m.recipient_id = $1
                ORDER BY m.created_at DESC`
-  const res = await pool.query(sql, [account_id])
-  return res.rows
+  const { rows } = await pool.query(sql, [accountId])
+  return rows
 }
 
-async function getOutbox(account_id) {
+/**
+ * Get outbox (sent) messages for a user
+ */
+async function getOutbox(accountId) {
   const sql = `SELECT m.*, r.account_firstname AS recipient_first, r.account_lastname AS recipient_last
                FROM public.messages m
                LEFT JOIN public.account r ON m.recipient_id = r.account_id
                WHERE m.sender_id = $1
                ORDER BY m.created_at DESC`
-  const res = await pool.query(sql, [account_id])
-  return res.rows
+  const { rows } = await pool.query(sql, [accountId])
+  return rows
 }
 
-async function markRead(message_id, is_read = true) {
-  const sql = `UPDATE public.messages SET is_read = $1, updated_at = now() WHERE message_id = $2 RETURNING *`
-  const res = await pool.query(sql, [is_read, message_id])
-  return res.rows[0]
-}
-
-async function getMessageById(message_id) {
-  const sql = `SELECT m.*, s.account_firstname AS sender_first, r.account_firstname AS recipient_first
+/**
+ * Get single message by id (for view)
+ */
+async function getMessageById(messageId) {
+  const sql = `SELECT m.*, s.account_firstname AS sender_first, s.account_lastname AS sender_last,
+                      r.account_firstname AS recipient_first, r.account_lastname AS recipient_last
                FROM public.messages m
                LEFT JOIN public.account s ON m.sender_id = s.account_id
                LEFT JOIN public.account r ON m.recipient_id = r.account_id
                WHERE m.message_id = $1`
-  const res = await pool.query(sql, [message_id])
-  return res.rows[0]
+  const { rows } = await pool.query(sql, [messageId])
+  return rows[0]
+}
+
+/**
+ * Mark a message read/unread
+ */
+async function markRead(messageId, isRead) {
+  const sql = `UPDATE public.messages SET is_read = $1 WHERE message_id = $2 RETURNING *`
+  const { rows } = await pool.query(sql, [isRead, messageId])
+  return rows[0]
+}
+
+/**
+ * Delete message by id (sender or recipient allowed)
+ */
+async function deleteMessage(messageId) {
+  const sql = `DELETE FROM public.messages WHERE message_id = $1 RETURNING *`
+  const { rows } = await pool.query(sql, [messageId])
+  return rows[0]
+}
+
+/**
+ * Utility to list recipients filtered by account types
+ * Accepts array of role strings (e.g. ['Employee','Manager']) - returns id + firstname/lastname
+ */
+async function listRecipientsByRoles(roles = []) {
+  try {
+    // ensure roles are lowercased strings
+    const normalized = roles.map(r => String(r).toLowerCase())
+    // note: cast account_type to text before calling lower()
+    const sql = `
+      SELECT account_id, account_firstname, account_lastname, account_email, account_type
+      FROM public.account
+      WHERE lower(account_type::text) = ANY($1::text[])
+      ORDER BY account_firstname, account_lastname
+    `
+    const result = await pool.query(sql, [normalized])
+    return result.rows
+  } catch (err) {
+    throw err
+  }
 }
 
 module.exports = {
   sendMessage,
   getInbox,
   getOutbox,
-  markRead,
   getMessageById,
+  markRead,
+  deleteMessage,
+  listRecipientsByRoles,
 }

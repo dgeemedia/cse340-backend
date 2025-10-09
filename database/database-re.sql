@@ -159,4 +159,15 @@ CREATE TABLE IF NOT EXISTS public.messages (
 CREATE INDEX IF NOT EXISTS idx_messages_recipient_id ON public.messages(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON public.messages(sender_id);
 
+-- 2025xx_add_review_replies.sql
+CREATE TABLE IF NOT EXISTS public.review_replies (
+  reply_id          SERIAL PRIMARY KEY,
+  review_id         INTEGER NOT NULL REFERENCES public.reviews(review_id) ON DELETE CASCADE,
+  account_id        INTEGER REFERENCES public.account(account_id) ON DELETE SET NULL,
+  reply_text        TEXT NOT NULL,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- optional index for lookups
+CREATE INDEX IF NOT EXISTS idx_review_replies_review_id ON public.review_replies(review_id);
 

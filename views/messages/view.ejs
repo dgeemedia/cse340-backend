@@ -1,0 +1,17 @@
+<!-- views/messages/view.ejs -->
+<div class="container">
+  <h1>Message</h1>
+
+  <div class="card" style="padding:14px; max-width:840px;">
+    <p><strong>From:</strong> <%= message.sender_first || 'System' %> <%= message.sender_last || '' %></p>
+    <p><strong>To:</strong> <%= message.recipient_first || '' %> <%= message.recipient_last || '' %></p>
+    <p><strong>Subject:</strong> <%= message.subject || '(no subject)' %></p>
+    <p><strong>Date:</strong> <%= new Date(message.created_at).toLocaleString() %></p>
+    <hr>
+    <div style="white-space:pre-wrap;"><%= message.body %></div>
+  </div>
+
+  <p style="margin-top:12px;">
+    <a href="/account/messages/inbox" class="btn">Back to inbox</a>
+  </p>
+</div>

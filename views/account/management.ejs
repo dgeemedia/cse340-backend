@@ -28,6 +28,7 @@
       <div class="account-actions">
         <% if (account && account.account_id) { %>
           <a href="/account/edit/<%= account.account_id %>" class="btn-secondary">Update account information</a>
+          <a href="/account/messages/compose" class="btn">Compose</a>
           <a href="/account/messages/inbox" class="btn">Inbox (<%= typeof inboxCount !== 'undefined' ? inboxCount : 0 %>)</a>
           <a href="/account/messages/outbox" class="btn">Sent</a>
         <% } %>

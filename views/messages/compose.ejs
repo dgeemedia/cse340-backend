@@ -1,0 +1,31 @@
+<!-- views/messages/compose.ejs -->
+<div class="container">
+  <h1>Compose Message</h1>
+
+  <form action="/account/messages/send" method="post" class="account-form" style="max-width:720px;">
+    <div class="form-row">
+      <label for="recipient_id">Recipient</label>
+      <select id="recipient_id" name="recipient_id" required>
+        <option value="">Choose recipient</option>
+        <% recipients.forEach(r => { %>
+          <option value="<%= r.account_id %>"><%= r.account_firstname %> <%= r.account_lastname %> — <%= r.account_type %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="subject">Subject (optional)</label>
+      <input id="subject" name="subject" type="text" />
+    </div>
+
+    <div class="form-row">
+      <label for="body">Message</label>
+      <textarea id="body" name="body" rows="6" required></textarea>
+    </div>
+
+    <div class="form-row">
+      <button class="btn-primary">Send</button>
+      <a href="/account/messages/inbox" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>

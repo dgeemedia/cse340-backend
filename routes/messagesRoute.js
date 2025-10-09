@@ -1,16 +1,25 @@
-const express = require("express")
+// routes/messagesRoute.js
+const express = require('express')
 const router = express.Router()
-const utilities = require("../utilities")
-const messagesController = require("../controllers/messagesController")
+const utilities = require('../utilities')
+const messagesController = require('../controllers/messagesController')
 
-// Inbox / Outbox
-router.get("/inbox", utilities.checkLogin, utilities.handleErrors(messagesController.inboxView))
-router.get("/outbox", utilities.checkLogin, utilities.handleErrors(messagesController.outboxView))
+// require login for all message routes
+router.use(utilities.checkLogin)
 
-// Send message (form)
-router.post("/send", utilities.checkLogin, utilities.handleErrors(messagesController.sendMessage))
+// inbox/outbox/view
+router.get('/inbox', utilities.handleErrors(messagesController.inboxView))
+router.get('/outbox', utilities.handleErrors(messagesController.outboxView))
+router.get('/view/:message_id', utilities.handleErrors(messagesController.viewMessage))
 
-// Mark read/unread (AJAX)
-router.post("/mark-read", utilities.checkLogin, utilities.handleErrors(messagesController.markRead))
+// compose + send
+router.get('/compose', utilities.handleErrors(messagesController.composeView))
+router.post('/send', utilities.handleErrors(messagesController.sendMessage))
+
+// AJAX mark-read
+router.post('/mark-read', utilities.handleErrors(messagesController.markRead))
+
+// delete
+router.post('/delete', utilities.handleErrors(messagesController.deleteMessageHandler))
 
 module.exports = router
