@@ -22,7 +22,18 @@
         </div>
     </div>
 
-        <!-- site JS -->
+    <!-- site JS -->
+    <!-- expose current user id (for client logic) -->
+<script>
+  // safe JSON-encoded user id (null if not logged in)
+  window.CURRENT_USER_ID = <%- JSON.stringify((typeof accountData !== 'undefined' && accountData && accountData.account_id) ? accountData.account_id : null) %>;
+</script>
+
+    <!-- socket.io client (auto-served by socket.io server) -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- small chat client to handle incoming_message etc. -->
+    <script src="/js/chat.js"></script>
+
     <script src="/js/script.js"></script>
 </body>
 </html>

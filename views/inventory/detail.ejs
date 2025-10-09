@@ -1,20 +1,109 @@
 <!-- views/inventory/detail.ejs -->
-<div class="container inventory-detail-page">
-  <div class="page-intro">
-    <% if (title) { %>
-      <h1 id="page-title" class="page-title"><%= title %></h1>
-    <% } %>
-  </div>
+<div class="container">
+  <% if (!detail && !detailHtml) { %>
+    <h1>Vehicle details</h1>
+    <p class="notice">No vehicle data available.</p>
+  <% } else { %>
 
-  <section aria-labelledby="page-title" class="inventory-detail-section">
-    <h2 class="sr-only">Vehicle details</h2>
+    <!-- If we have a structured object, render with object fields -->
+    <% if (detail) { %>
+      <div class="vehicle-page" style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+        <div class="vehicle-media" style="flex:1 1 360px; max-width:560px;">
+          <% 
+            // determine image path - if inv_image is full path or relative, use as-is
+            const imagePath = (detail.inv_image && detail.inv_image.startsWith('/')) ? detail.inv_image : (detail.inv_image ? `/images/vehicles/${detail.inv_image}` : '/images/site/placeholder.jpg')
+          %>
+          <div class="card" style="padding:0;">
+            <img src="<%= imagePath %>" alt="<%= detail.inv_make %> <%= detail.inv_model %>" style="width:100%; display:block; border-radius:10px;">
+          </div>
+        </div>
 
-    <% if (typeof detail !== "undefined" && detail) { %>
-      <section class="inventory-detail-wrap">
-        <%- detail %>
-      </section>
+        <div class="vehicle-info" style="flex:1 1 320px; min-width:260px;">
+          <h1><%= detail.inv_make %> <%= detail.inv_model %> <small style="font-weight:600; color:var(--muted);">(<%= detail.inv_year || 'N/A' %>)</small></h1>
+
+          <% if (typeof avgRating !== 'undefined') { %>
+            <p class="muted">Average rating: <strong><%= avgRating %></strong> (<%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> reviews)</p>
+          <% } %>
+
+          <% if (detail.inv_price) { %>
+            <p class="price" style="font-size:1.15rem; font-weight:700;">$<%= new Intl.NumberFormat('en-US').format(detail.inv_price) %></p>
+          <% } %>
+
+          <div class="desc" style="margin-top:12px;">
+            <p><%= detail.inv_description || 'No description available.' %></p>
+          </div>
+
+          <ul class="specs" style="margin-top:12px; list-style:none; padding:0;">
+            <li><strong>Color:</strong> <%= detail.inv_color || 'N/A' %></li>
+            <li><strong>Miles:</strong> <%= detail.inv_miles ? new Intl.NumberFormat('en-US').format(detail.inv_miles) : 'N/A' %></li>
+            <li><strong>Transmission:</strong> <%= detail.inv_transmission || 'N/A' %></li>
+          </ul>
+        </div>
+      </div>
     <% } else { %>
-      <p class="notice">Sorry, no vehicle details available.</p>
+
+      <!-- Backwards-compatibility: render the HTML fragment if object unavailable -->
+      <div class="vehicle-page">
+        <%- detailHtml %>
+      </div>
+
     <% } %>
-  </section>
+
+    <!-- Reviews section -->
+    <section id="reviews" style="margin-top:24px;">
+      <h2>Reviews</h2>
+
+      <% if (typeof avgRating !== 'undefined') { %>
+        <p class="muted">Average rating: <strong><%= avgRating %></strong> — <%= typeof reviewCount !== 'undefined' ? reviewCount : 0 %> review(s)</p>
+      <% } %>
+
+      <!-- Review form (only for logged-in users) -->
+      <% if (typeof loggedin !== 'undefined' && loggedin) { %>
+        <form id="reviewForm" action="/reviews/add" method="post" class="card" style="max-width:720px; margin-bottom:18px;">
+          <input type="hidden" name="inv_id" value="<%= detail ? detail.inv_id : '' %>">
+          <div class="form-row">
+            <label for="rating">Rating</label>
+            <select name="rating" id="rating">
+              <option value="5">5 — Excellent</option>
+              <option value="4">4 — Good</option>
+              <option value="3">3 — Okay</option>
+              <option value="2">2 — Poor</option>
+              <option value="1">1 — Terrible</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="comment">Comment</label>
+            <textarea id="comment" name="comment" rows="4" placeholder="Share your experience..."></textarea>
+          </div>
+          <div class="form-row">
+            <button class="btn-primary" type="submit">Submit review</button>
+          </div>
+        </form>
+      <% } else { %>
+        <p><a href="/account/login">Sign in</a> to leave a review.</p>
+      <% } %>
+
+      <!-- Recent reviews list (server-provided fallback) -->
+      <div id="reviewsList" style="max-width:720px;">
+        <% if (Array.isArray(recentReviews) && recentReviews.length) { %>
+          <ul style="list-style:none; padding:0; margin:0;">
+            <% recentReviews.forEach(rv => { %>
+              <li class="card" style="margin-bottom:10px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; gap:8px;">
+                  <div>
+                    <strong><%= rv.account_firstname %> <%= rv.account_lastname %></strong>
+                    <div class="muted" style="font-size:0.9rem;">Rating: <%= rv.rating %> — <%= new Date(rv.created_at).toLocaleString() %></div>
+                    <p style="margin-top:8px;"><%= rv.comment %></p>
+                  </div>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p class="muted">No reviews yet. Be the first to review this vehicle!</p>
+        <% } %>
+      </div>
+    </section>
+
+  <% } %>
 </div>

@@ -127,3 +127,36 @@ ADD COLUMN inv_transmission VARCHAR(50);
 
 -- Run this first (must be committed before the UPDATE)
 ALTER TYPE account_type ADD VALUE 'Manager';
+
+-- 2025xx_add_reviews_and_messages.sql
+
+-- Reviews table
+CREATE TABLE IF NOT EXISTS public.reviews (
+  review_id SERIAL PRIMARY KEY,
+  inv_id INTEGER NOT NULL REFERENCES public.inventory(inv_id) ON DELETE CASCADE,
+  account_id INTEGER NOT NULL REFERENCES public.account(account_id) ON DELETE CASCADE,
+  rating SMALLINT CHECK (rating >= 1 AND rating <= 5) DEFAULT 5,
+  comment TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reviews_inv_id ON public.reviews(inv_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_account_id ON public.reviews(account_id);
+
+-- Messages table (inbox/outbox)
+CREATE TABLE IF NOT EXISTS public.messages (
+  message_id SERIAL PRIMARY KEY,
+  sender_id INTEGER NOT NULL REFERENCES public.account(account_id) ON DELETE SET NULL,
+  recipient_id INTEGER NOT NULL REFERENCES public.account(account_id) ON DELETE SET NULL,
+  subject TEXT,
+  body TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_messages_recipient_id ON public.messages(recipient_id);
+CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON public.messages(sender_id);
+
+

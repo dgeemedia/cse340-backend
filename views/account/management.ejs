@@ -4,9 +4,15 @@
 
   <% if (errors) { %>
     <ul class="error">
-      <% errors.array().forEach(error => { %>
-        <li><%= error.msg %></li>
-      <% }) %>
+      <% if (typeof errors.array === 'function') { 
+           errors.array().forEach(error => { %>
+             <li><%= error.msg %></li>
+      <%   })
+         } else if (Array.isArray(errors)) {
+           errors.forEach(err => { %>
+             <li><%= err.msg || err %></li>
+      <%   })
+         } %>
     </ul>
   <% } %>
 
@@ -20,13 +26,14 @@
       <% } %>
 
       <div class="account-actions">
-        <!-- update account link (Task 3) -->
         <% if (account && account.account_id) { %>
           <a href="/account/edit/<%= account.account_id %>" class="btn-secondary">Update account information</a>
+          <a href="/account/messages/inbox" class="btn">Inbox (<%= typeof inboxCount !== 'undefined' ? inboxCount : 0 %>)</a>
+          <a href="/account/messages/outbox" class="btn">Sent</a>
         <% } %>
 
         <!-- show Logout only as a form (already in header); keep a fallback here if needed -->
-        <form action="/account/logout" method="post" style="display:inline">
+        <form action="/account/logout" method="post" style="display:inline; margin-left:8px;">
           <button class="btn-logout" type="submit">Logout</button>
         </form>
       </div>
@@ -48,9 +55,57 @@
       <% } %>
     </div>
 
-    <div class="account-links">
+    <!-- User Reviews -->
+    <section class="user-reviews" style="margin-top:18px;">
+      <% if (reviews && reviews.length) { %>
+        <h3>Your Reviews</h3>
+        <ul class="card" style="padding:12px; list-style:none;">
+          <% reviews.forEach(r => { %>
+            <li style="margin-bottom:14px; border-bottom:1px solid rgba(15,23,42,0.04); padding-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+                <div>
+                  <strong><%= r.inv_make %> <%= r.inv_model %></strong>
+                  <div class="text-muted" style="font-size:0.95rem;">Rating: <%= r.rating %> — <%= new Date(r.created_at).toLocaleString() %></div>
+                  <p style="margin-top:8px;"><%= r.comment %></p>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                  <a href="/reviews/edit/<%= r.review_id %>" class="btn" aria-label="Edit review">Edit</a>
+
+                  <form class="review-delete-form" action="/reviews/delete" method="post" style="display:inline;">
+                    <input type="hidden" name="review_id" value="<%= r.review_id %>">
+                    <button class="btn review-delete-btn" type="submit" aria-label="Delete review">Delete</button>
+                  </form>
+                </div>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+
+        <!-- pagination -->
+        <% if (typeof reviewsPagination !== 'undefined' && reviewsPagination.totalPages > 1) { %>
+          <nav class="pagination" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <% if (reviewsPagination.page > 1) { %>
+              <a class="btn" href="?page=<%= reviewsPagination.page - 1 %>">Previous</a>
+            <% } %>
+            <span>Page <%= reviewsPagination.page %> of <%= reviewsPagination.totalPages %></span>
+            <% if (reviewsPagination.page < reviewsPagination.totalPages) { %>
+              <a class="btn" href="?page=<%= reviewsPagination.page + 1 %>">Next</a>
+            <% } %>
+          </nav>
+        <% } %>
+
+      <% } else { %>
+        <p class="text-muted">You have not posted any reviews yet.</p>
+      <% } %>
+    </section>
+
+    <div class="account-links" style="margin-top:18px;">
       <a href="/">Back to Home</a>
       <a href="/account/change-password">Change password</a>
     </div>
   </div>
 </div>
+
+<!-- include client-side confirmation script just for this page -->
+<script src="/js/account-reviews.js"></script>

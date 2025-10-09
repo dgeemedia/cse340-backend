@@ -1,6 +1,8 @@
 // controllers/accountController.js
 const utilities = require("../utilities")
 const accountModel = require("../models/account-model")
+const reviewsModel = require("../models/reviews-model")
+const messagesModel = require("../models/messages-model")
 const bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken')
 require("dotenv").config()
@@ -126,20 +128,54 @@ async function accountLogin(req, res) {
 async function buildManagement(req, res, next) {
   try {
     let nav = await utilities.getNav()
-    // account info (set by checkJWTToken middleware when logged in)
     const account = res.locals.accountData || null
+    let userReviews = []
+    let inboxCount = 0
+    let totalReviews = 0
+    const pageSize = 5
+    const currentPage = Math.max(1, parseInt(req.query.page || '1', 10))
 
-    // Render the management view; show flash messages and any errors via express-messages
+    if (account && account.account_id) {
+      try {
+        const reviewsModel = require("../models/reviews-model")
+        const offset = (currentPage - 1) * pageSize
+        userReviews = await reviewsModel.getReviewsByAccount(account.account_id, pageSize, offset)
+        totalReviews = await reviewsModel.getReviewCountByAccount(account.account_id)
+      } catch (err) {
+        console.error('could not load user reviews:', err)
+        userReviews = []
+        totalReviews = 0
+      }
+      try {
+        const messagesModel = require("../models/messages-model")
+        const inbox = await messagesModel.getInbox(account.account_id)
+        inboxCount = Array.isArray(inbox) ? inbox.length : 0
+      } catch (err) {
+        inboxCount = 0
+      }
+    }
+
     res.render("account/management", {
       title: "Account Management",
       nav,
       account,
+      reviews: userReviews,
+      inboxCount,
+      loggedin: res.locals.loggedin || 0,
       errors: null,
+      // pagination metadata
+      reviewsPagination: {
+        total: totalReviews,
+        page: currentPage,
+        pageSize,
+        totalPages: Math.ceil(totalReviews / pageSize),
+      },
     })
   } catch (err) {
     next(err)
   }
 }
+
 
 /* Deliver account edit (update) view */
 async function buildAccountEdit(req, res, next) {

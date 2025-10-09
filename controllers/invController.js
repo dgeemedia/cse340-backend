@@ -21,22 +21,44 @@ invCont.buildByClassificationId = async function (req, res, next) {
 // Build inventory detail view
 invCont.buildByInventoryId = async function (req, res, next) {
   try {
-    const invId = req.params.invId
+    const invId = parseInt(req.params.invId, 10)
+    if (!invId || Number.isNaN(invId)) {
+      const nav = await utilities.getNav()
+      req.flash('error', 'Invalid vehicle id.')
+      return res.redirect('/inv')
+    }
+
     const vehicle = await invModel.getInventoryById(invId)
     if (!vehicle) {
-      let nav = await utilities.getNav()
+      const nav = await utilities.getNav()
       return res.status(404).render("./inventory/detail", {
         title: "Vehicle not found",
         nav,
-        detail: '<p class="notice">Sorry, that vehicle could not be found.</p>',
+        detailHtml: '<p class="notice">Sorry, that vehicle could not be found.</p>',
+        detail: null,
       })
     }
-    const detail = await utilities.buildInventoryDetail(vehicle)
+
+    // fetch average rating + review count and a few recent reviews
+    const reviewsModel = require("../models/reviews-model")
+    const avgObj = await reviewsModel.getAverageRatingByInventory(invId)
+    const recentReviews = await reviewsModel.getReviewsByInventory(invId, 5, 0)
+
+    // preserve old utility HTML for backwards compatibility
+    const detailHtml = await utilities.buildInventoryDetail(vehicle)
     const nav = await utilities.getNav()
+
     res.render("./inventory/detail", {
       title: `${vehicle.inv_make} ${vehicle.inv_model}`,
       nav,
-      detail,
+      // object form (for templates that reference detail.inv_id etc.)
+      detail: vehicle,
+      // HTML fragment (for templates that previously used `detail` string)
+      detailHtml,
+      // review metadata
+      avgRating: avgObj.avg_rating,
+      reviewCount: avgObj.count,
+      recentReviews,
     })
   } catch (error) {
     next(error)

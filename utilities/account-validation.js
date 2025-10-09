@@ -118,7 +118,7 @@ validate.checkLoginData = async (req, res, next) => {
   next()
 }
 
-//
+
 // -------------------------
 /* ***************************
  *  Update Account Validation Rules

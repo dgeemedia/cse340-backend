@@ -1,0 +1,24 @@
+<!-- views/reviews/edit.ejs -->
+ <div class="container">
+  <h1>Edit review</h1>
+  <form method="post" action="/reviews/update" class="account-form">
+    <input type="hidden" name="review_id" value="<%= review.review_id %>">
+    <input type="hidden" name="inv_id" value="<%= review.inv_id %>">
+    <div class="form-row">
+      <label for="rating">Rating</label>
+      <select id="rating" name="rating">
+        <% for(let i=5;i>=1;i--) { %>
+          <option value="<%= i %>" <%= review.rating==i ? 'selected' : '' %>><%= i %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="comment">Comment</label>
+      <textarea id="comment" name="comment" rows="6"><%= review.comment %></textarea>
+    </div>
+    <div class="form-row">
+      <button class="btn-primary">Update review</button>
+      <a href="/inv/detail/<%= review.inv_id %>" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>
